@@ -18,6 +18,7 @@ use Illuminate\Session\Middleware\AuthenticateSession;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
 use Filament\Navigation\NavigationGroup;
+use Illuminate\Support\Facades\Auth;
 
 class GjmPanelProvider extends PanelProvider
 {
@@ -40,6 +41,10 @@ class GjmPanelProvider extends PanelProvider
       ->pages([
         \App\Filament\Gjm\Pages\Dashboard::class,
       ])
+      ->plugin(
+        \Hasnayeen\Themes\ThemesPlugin::make()
+        ->canViewThemesPage(fn() => Auth::user()?->is_gjm_admin === true)
+    )
       ->discoverWidgets(in: app_path('Filament/Gjm/Widgets'), for: 'App\\Filament\\Gjm\\Widgets')
       ->widgets([
         // Default widgets
@@ -76,6 +81,7 @@ class GjmPanelProvider extends PanelProvider
         SubstituteBindings::class,
         DisableBladeIconComponents::class,
         DispatchServingFilamentEvent::class,
+        \Hasnayeen\Themes\Http\Middleware\SetTheme::class
       ])
       ->authMiddleware([
         Authenticate::class,

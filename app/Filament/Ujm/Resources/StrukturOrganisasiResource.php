@@ -52,7 +52,8 @@ class StrukturOrganisasiResource extends Resource
               ->imageResizeTargetWidth('1920')
               ->imageResizeTargetHeight('1080')
               ->helperText('Upload gambar struktur organisasi. Format: JPG, PNG. Maksimal 5MB')
-              ->columnSpanFull(),
+              ->columnSpanFull()
+              ->url(fn($record) => asset('storage/' . $record->gambar)),
             Forms\Components\Toggle::make('is_active')
               ->label('Status Aktif')
               ->default(true)

@@ -20,6 +20,7 @@ return new class extends Migration {
             $table->string('pendidikan_terakhir')->nullable();
             $table->string('email')->nullable();
             $table->string('telepon')->nullable();
+            $table->string('status_kepegawaian')->nullable();
             $table->boolean('is_active')->default(true);
             $table->timestamps();
         });

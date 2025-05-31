@@ -19,6 +19,7 @@ use Illuminate\Session\Middleware\AuthenticateSession;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
 use Filament\Navigation\NavigationGroup;
+use Illuminate\Support\Facades\Auth;
 
 class UjmPanelProvider extends PanelProvider
 {
@@ -33,7 +34,7 @@ class UjmPanelProvider extends PanelProvider
         'primary' => Color::Blue,
       ])
       ->brandName('Unit Jaminan Mutu')
-      ->brandLogo(asset('images/logo.png'))
+      ->brandLogo('')
       ->brandLogoHeight('3rem')
       ->favicon(asset('images/favicon.ico'))
       ->discoverResources(in: app_path('Filament/Ujm/Resources'), for: 'App\\Filament\\Ujm\\Resources')
@@ -47,6 +48,10 @@ class UjmPanelProvider extends PanelProvider
         \App\Filament\Ujm\Widgets\RecentActivities::class,
         \App\Filament\Ujm\Widgets\DocumentStatus::class,
       ])
+      ->plugin(
+          \Hasnayeen\Themes\ThemesPlugin::make()
+              ->canViewThemesPage(fn() => Auth::user()?->is_ujm_admin === true)
+      )
       ->navigationGroups([
         NavigationGroup::make()
           ->label('Profil')
@@ -87,6 +92,7 @@ class UjmPanelProvider extends PanelProvider
         SubstituteBindings::class,
         DisableBladeIconComponents::class,
         DispatchServingFilamentEvent::class,
+        \Hasnayeen\Themes\Http\Middleware\SetTheme::class
       ])
       ->authMiddleware([
         Authenticate::class,

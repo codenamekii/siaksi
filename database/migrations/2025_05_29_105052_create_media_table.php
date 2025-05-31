@@ -20,7 +20,7 @@ return new class extends Migration
             $table->string('disk');
             $table->string('conversions_disk')->nullable();
             $table->unsignedBigInteger('size');
-            $table->json('manipulations');
+            $table->json('manuptkulations');
             $table->json('custom_properties');
             $table->json('generated_conversions');
             $table->json('responsive_images');

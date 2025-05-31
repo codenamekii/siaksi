@@ -14,6 +14,26 @@ class DosenSeeder extends Seeder
     $prodiTF = ProgramStudi::where('kode', 'TF')->first();
     $prodiTE = ProgramStudi::where('kode', 'TE')->first();
 
+
+    $bidangKeahlian = [
+      'Rekayasa Perangkat Lunak',
+      'Jaringan Komputer',
+      'Kecerdasan Buatan',
+      'Sistem Informasi Manajemen',
+      'Basis Data',
+      'Keamanan Informasi',
+      'Multimedia',
+      'Sistem Cerdas',
+      'Data Mining',
+      'Mobile Computing'
+    ];
+
+    $dosens = Dosen::all();
+    foreach ($dosens as $index => $dosen) {
+      $dosen->update([
+        'bidang_keahlian' => $bidangKeahlian[$index % count($bidangKeahlian)]
+      ]);
+    }
     // Dosen Prodi TI
     $dosenTI = [
       [

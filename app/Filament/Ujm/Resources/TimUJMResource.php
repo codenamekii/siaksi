@@ -1,30 +1,31 @@
 <?php
 
-// 1. app/Filament/Gjm/Resources/TimGJMResource.php
-namespace App\Filament\Gjm\Resources;
+// 1. app/Filament/Ujm/Resources/TimUJMResource.php
+namespace App\Filament\Ujm\Resources;
 
-use App\Filament\Gjm\Resources\TimGJMResource\Pages;
-use App\Models\TimGJM;
+use App\Filament\Ujm\Resources\TimUJMResource\Pages;
+use App\Models\TimUJM;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Facades\Auth;
 
-class TimGJMResource extends Resource
+class TimUJMResource extends Resource
 {
-  protected static ?string $model = TimGJM::class;
+  protected static ?string $model = TimUJM::class;
 
   protected static ?string $navigationIcon = 'heroicon-o-user-group';
 
-  protected static ?string $navigationLabel = 'Tim GJM';
+  protected static ?string $navigationLabel = 'Tim UJM';
 
-  protected static ?string $modelLabel = 'Anggota Tim GJM';
+  protected static ?string $modelLabel = 'Anggota Tim UJM';
 
-  protected static ?string $pluralModelLabel = 'Tim GJM';
+  protected static ?string $pluralModelLabel = 'Tim UJM Prodi';
 
-  protected static ?int $navigationSort = 5;
+  protected static ?int $navigationSort = 2;
 
   protected static ?string $navigationGroup = 'Organisasi';
 
@@ -40,11 +41,11 @@ class TimGJMResource extends Resource
             Forms\Components\TextInput::make('jabatan')
               ->required()
               ->maxLength(255)
-              ->placeholder('Contoh: Ketua GJM, Sekretaris GJM'),
+              ->placeholder('Contoh: Ketua UJM, Sekretaris UJM'),
             Forms\Components\TextInput::make('nuptk')
-              ->label('NUPTK')
+              ->label('nuptk')
               ->maxLength(20)
-              ->placeholder('NUPTK'),
+              ->placeholder('Nomor Induk Pegawai'),
           ])->columns(3),
 
         Forms\Components\Section::make('Kontak')
@@ -62,7 +63,7 @@ class TimGJMResource extends Resource
           ->schema([
             Forms\Components\FileUpload::make('foto')
               ->image()
-              ->directory('tim-gjm')
+              ->directory(fn() => 'tim-ujm/' . Auth::user()->programStudi?->kode)
               ->maxSize(2048)
               ->imageResizeMode('cover')
               ->imageCropAspectRatio('1:1')
@@ -76,8 +77,8 @@ class TimGJMResource extends Resource
             Forms\Components\Toggle::make('is_active')
               ->label('Status Aktif')
               ->default(true),
-            Forms\Components\Hidden::make('fakultas_id')
-              ->default(1), // Default fakultas ID
+            Forms\Components\Hidden::make('program_studi_id')
+              ->default(fn() => Auth::user()->programStudi?->id),
           ])->columns(3),
       ]);
   }
@@ -104,11 +105,11 @@ class TimGJMResource extends Resource
           ->color(fn(string $state): string => match (true) {
             str_contains(strtolower($state), 'ketua') => 'danger',
             str_contains(strtolower($state), 'sekretaris') => 'warning',
-            str_contains(strtolower($state), 'koordinator') => 'info',
+            str_contains(strtolower($state), 'anggota') => 'info',
             default => 'gray',
           }),
         Tables\Columns\TextColumn::make('nuptk')
-          ->label('NUPTK')
+          ->label('nuptk')
           ->searchable()
           ->toggleable(),
         Tables\Columns\TextColumn::make('email')
@@ -131,14 +132,14 @@ class TimGJMResource extends Resource
           ->label('')
           ->icon('heroicon-o-chevron-up')
           ->color('gray')
-          ->action(function (TimGJM $record): void {
+          ->action(function (TimUJM $record): void {
             $record->moveOrderUp();
           }),
         Tables\Actions\Action::make('moveDown')
           ->label('')
           ->icon('heroicon-o-chevron-down')
           ->color('gray')
-          ->action(function (TimGJM $record): void {
+          ->action(function (TimUJM $record): void {
             $record->moveOrderDown();
           }),
         Tables\Actions\EditAction::make(),
@@ -153,6 +154,12 @@ class TimGJMResource extends Resource
       ->reorderable('urutan');
   }
 
+  public static function getEloquentQuery(): Builder
+  {
+    return parent::getEloquentQuery()
+      ->where('program_studi_id', Auth::user()->programStudi?->id);
+  }
+
   public static function getRelations(): array
   {
     return [
@@ -163,9 +170,9 @@ class TimGJMResource extends Resource
   public static function getPages(): array
   {
     return [
-      'index' => Pages\ListTimGJMS::route('/'),
-      'create' => Pages\CreateTimGJM::route('/create'),
-      'edit' => Pages\EditTimGJM::route('/{record}/edit'),
+      'index' => Pages\ListTimUJMS::route('/'),
+      'create' => Pages\CreateTimUJM::route('/create'),
+      'edit' => Pages\EditTimUJM::route('/{record}/edit'),
     ];
   }
 }

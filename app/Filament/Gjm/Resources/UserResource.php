@@ -39,7 +39,7 @@ class UserResource extends Resource
             Forms\Components\Section::make('Detail User')
                 ->schema([
                     Forms\Components\Hidden::make('role')->default('ujm'),
-                    Forms\Components\TextInput::make('nip')->label('NUPTK')->maxLength(255),
+                    Forms\Components\TextInput::make('nuptk')->label('NUPTK')->maxLength(255),
                     Forms\Components\TextInput::make('phone')->label('No. Telepon')->tel()->maxLength(255),
                     Forms\Components\Select::make('program_studi_id')
                         ->label('Program Studi')
@@ -56,7 +56,7 @@ class UserResource extends Resource
     public static function table(Table $table): Table
     {
         return $table
-            ->columns([Tables\Columns\TextColumn::make('name')->label('Nama')->searchable(), Tables\Columns\TextColumn::make('email')->searchable(), Tables\Columns\TextColumn::make('programStudi.nama')->label('Program Studi')->badge()->color('info')->searchable(), Tables\Columns\TextColumn::make('nip')->label('NUPTK')->searchable()->toggleable(), Tables\Columns\TextColumn::make('phone')->label('Telepon')->toggleable(), Tables\Columns\IconColumn::make('is_active')->label('Status')->boolean()->trueIcon('heroicon-o-check-circle')->falseIcon('heroicon-o-x-circle')->trueColor('success')->falseColor('danger'), Tables\Columns\TextColumn::make('created_at')->label('Dibuat')->dateTime('d M Y')->sortable()->toggleable(isToggledHiddenByDefault: true)])
+            ->columns([Tables\Columns\TextColumn::make('name')->label('Nama')->searchable(), Tables\Columns\TextColumn::make('email')->searchable(), Tables\Columns\TextColumn::make('programStudi.nama')->label('Program Studi')->badge()->color('info')->searchable(), Tables\Columns\TextColumn::make('nuptk')->label('NUPTK')->searchable()->toggleable(), Tables\Columns\TextColumn::make('phone')->label('Telepon')->toggleable(), Tables\Columns\IconColumn::make('is_active')->label('Status')->boolean()->trueIcon('heroicon-o-check-circle')->falseIcon('heroicon-o-x-circle')->trueColor('success')->falseColor('danger'), Tables\Columns\TextColumn::make('created_at')->label('Dibuat')->dateTime('d M Y')->sortable()->toggleable(isToggledHiddenByDefault: true)])
             ->filters([Tables\Filters\SelectFilter::make('program_studi')->relationship('programStudi', 'nama')->label('Program Studi'), Tables\Filters\TernaryFilter::make('is_active')->label('Status Aktif')])
             ->actions([
                 Tables\Actions\EditAction::make(),

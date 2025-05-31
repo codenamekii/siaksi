@@ -47,7 +47,7 @@
             <table class="min-w-full divide-y divide-gray-200">
               <thead class="bg-gray-50">
                 <tr>
-                  <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">NIP</th>
+                  <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">NUPTK</th>
                   <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">NIDN</th>
                   <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nama</th>
                   <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Program Studi
@@ -61,7 +61,7 @@
               <tbody class="bg-white divide-y divide-gray-200">
                 @forelse($dosen as $d)
                   <tr>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ $d->nip }}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ $d->nuptk }}</td>
                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $d->nidn ?? '-' }}</td>
                     <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{{ $d->nama }}</td>
                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $d->programStudi->nama }}</td>
@@ -92,7 +92,7 @@
             <table class="min-w-full divide-y divide-gray-200">
               <thead class="bg-gray-50">
                 <tr>
-                  <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">NIP</th>
+                  <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">NUPTK</th>
                   <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nama</th>
                   <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Program Studi
                   </th>
@@ -106,7 +106,7 @@
               <tbody class="bg-white divide-y divide-gray-200">
                 @forelse($tendik as $t)
                   <tr>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ $t->nip }}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ $t->nuptk }}</td>
                     <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{{ $t->nama }}</td>
                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $t->programStudi->nama }}</td>
                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $t->jabatan }}</td>
