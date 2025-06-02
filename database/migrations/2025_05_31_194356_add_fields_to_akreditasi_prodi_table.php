@@ -10,8 +10,9 @@ return new class extends Migration {
      */
     public function up(): void
     {
-        Schema::table('tenaga_kependidikan', function (Blueprint $table) {
-            //
+        Schema::table('akreditasi_prodi', function (Blueprint $table) {
+            $table->integer('nilai_akreditasi')->nullable()->after('status_akreditasi');
+            $table->text('catatan')->nullable()->after('sertifikat');
         });
     }
 
@@ -20,8 +21,8 @@ return new class extends Migration {
      */
     public function down(): void
     {
-        Schema::table('tenaga_kependidikan', function (Blueprint $table) {
-            $table->dropColumn('status_kepegawaian');
+        Schema::table('akreditasi_prodi', function (Blueprint $table) {
+            //
         });
     }
 };

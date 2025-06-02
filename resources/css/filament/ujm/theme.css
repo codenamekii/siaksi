@@ -1,0 +1,65 @@
+@import '/vendor/filament/filament/resources/css/theme.css';
+
+/* Custom UJM Panel Styles */
+:root {
+  /* Override Filament colors for UJM */
+  --filament-ujm-primary: #6366f1;
+  /* Indigo */
+}
+
+/* Custom styling for UJM panel */
+.fi-sidebar {
+  /* Custom sidebar styling if needed */
+}
+
+.fi-topbar {
+  /* Custom topbar styling if needed */
+}
+
+/* UJM specific component styling */
+.ujm-stats-card {
+  background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
+  color: white;
+}
+
+/* Custom badge colors for UJM */
+.fi-badge-color-lkps {
+  background-color: #8b5cf6;
+  color: white;
+}
+
+.fi-badge-color-led {
+  background-color: #ec4899;
+  color: white;
+}
+
+.fi-badge-color-akreditasi {
+  background-color: #10b981;
+  color: white;
+}
+
+/* Dashboard widget enhancements */
+.fi-wi-stats-overview-stat {
+  transition: transform 0.2s ease-in-out;
+}
+
+.fi-wi-stats-overview-stat:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+/* Akreditasi status colors */
+.akreditasi-unggul {
+  background-color: #059669;
+  color: white;
+}
+
+.akreditasi-baik-sekali {
+  background-color: #10b981;
+  color: white;
+}
+
+.akreditasi-baik {
+  background-color: #3b82f6;
+  color: white;
+}

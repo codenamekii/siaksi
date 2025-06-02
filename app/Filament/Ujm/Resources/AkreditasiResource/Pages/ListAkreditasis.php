@@ -8,12 +8,20 @@ use Filament\Resources\Pages\ListRecords;
 
 class ListAkreditasis extends ListRecords
 {
-    protected static string $resource = AkreditasiResource::class;
+  protected static string $resource = AkreditasiResource::class;
 
-    protected function getHeaderActions(): array
-    {
-        return [
-            Actions\CreateAction::make(),
-        ];
-    }
+  protected function getHeaderActions(): array
+  {
+    return [
+      Actions\CreateAction::make()
+        ->label('Tambah Akreditasi Baru'),
+    ];
+  }
+
+  protected function getHeaderWidgets(): array
+  {
+    return [
+      AkreditasiResource\Widgets\CurrentAkreditasiWidget::class,
+    ];
+  }
 }
