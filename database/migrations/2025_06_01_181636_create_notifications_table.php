@@ -1,38 +1,35 @@
-\<?php
+<?php
 
-  // Lokasi file: database/migrations/2025_06_02_000002_create_notifications_table.php
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
 
-  use Illuminate\Database\Migrations\Migration;
-  use Illuminate\Database\Schema\Blueprint;
-  use Illuminate\Support\Facades\Schema;
-
-  return new class extends Migration
+return new class extends Migration
+{
+  /**
+   * Run the migrations.
+   */
+  public function up(): void
   {
-    /**
-     * Run the migrations.
-     */
-    public function up(): void
-    {
-      Schema::create('notifications', function (Blueprint $table) {
-        $table->uuid('id')->primary();
-        $table->string('type');
-        $table->morphs('notifiable');
-        $table->text('data');
-        $table->timestamp('read_at')->nullable();
-        $table->timestamps();
+    Schema::create('notifications', function (Blueprint $table) {
+      $table->uuid('id')->primary();
+      $table->string('type');
+      $table->morphs('notifiable'); // Sudah otomatis membuat index
+      $table->text('data');
+      $table->timestamp('read_at')->nullable();
+      $table->timestamps();
 
-        // Add indexes for better performance
-        $table->index(['notifiable_type', 'notifiable_id']);
-        $table->index('read_at');
-        $table->index('created_at');
-      });
-    }
+      // Hindari duplikasi index
+      $table->index('read_at');
+      $table->index('created_at');
+    });
+  }
 
-    /**
-     * Reverse the migrations.
-     */
-    public function down(): void
-    {
-      Schema::dropIfExists('notifications');
-    }
-  };
+  /**
+   * Reverse the migrations.
+   */
+  public function down(): void
+  {
+    Schema::dropIfExists('notifications');
+  }
+};

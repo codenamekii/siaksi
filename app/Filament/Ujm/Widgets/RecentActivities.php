@@ -2,63 +2,79 @@
 
 namespace App\Filament\Ujm\Widgets;
 
-use App\Models\Berita;
-use App\Models\Dokumen;
 use Filament\Widgets\Widget;
-use Illuminate\Support\Collection;
+use App\Models\Dokumen;
+use App\Models\Berita;
+use App\Models\GaleriKegiatan;
 use Illuminate\Support\Facades\Auth;
 
 class RecentActivities extends Widget
 {
   protected static string $view = 'filament.ujm.widgets.recent-activities';
 
-  protected static ?int $sort = 2;
-
   protected int | string | array $columnSpan = 'full';
 
-  protected function getViewData(): array
+  protected static ?int $sort = 2;
+
+  public function getRecentActivities()
   {
-    $prodiId = Auth::user()->programStudi?->id;
+    $prodiId = Auth::user()->program_studi_id;
 
-    if (!$prodiId) {
-      return ['activities' => collect([])];
-    }
+    $activities = collect();
 
-    // Gabungkan berita dan dokumen terbaru
-    $berita = Berita::where('program_studi_id', $prodiId)
+    // Recent documents
+    $documents = Dokumen::where('program_studi_id', $prodiId)
       ->latest()
       ->take(3)
       ->get()
-      ->map(function ($item) {
+      ->map(function ($doc) {
         return [
-          'type' => 'berita',
-          'title' => $item->judul,
-          'date' => $item->created_at,
-          'icon' => 'heroicon-o-newspaper',
-          'color' => 'primary',
-        ];
-      });
-
-    $dokumen = Dokumen::where('program_studi_id', $prodiId)
-      ->latest()
-      ->take(3)
-      ->get()
-      ->map(function ($item) {
-        return [
-          'type' => 'dokumen',
-          'title' => $item->nama,
-          'date' => $item->created_at,
+          'type' => 'document',
+          'title' => $doc->nama,
+          'description' => 'Dokumen ' . $doc->kategori_label,
+          'created_at' => $doc->created_at,
           'icon' => 'heroicon-o-document-text',
-          'color' => 'success',
+          'color' => 'blue',
         ];
       });
 
-    $activities = $berita->merge($dokumen)
-      ->sortByDesc('date')
-      ->take(5);
+    // Recent news
+    $news = Berita::where('program_studi_id', $prodiId)
+      ->latest()
+      ->take(3)
+      ->get()
+      ->map(function ($item) {
+        return [
+          'type' => 'news',
+          'title' => $item->judul,
+          'description' => 'Berita/Pengumuman',
+          'created_at' => $item->created_at,
+          'icon' => 'heroicon-o-newspaper',
+          'color' => 'green',
+        ];
+      });
 
-    return [
-      'activities' => $activities
-    ];
+    // Recent gallery
+    $gallery = GaleriKegiatan::where('program_studi_id', $prodiId)
+      ->latest()
+      ->take(2)
+      ->get()
+      ->map(function ($item) {
+        return [
+          'type' => 'gallery',
+          'title' => $item->judul,
+          'description' => 'Dokumentasi Kegiatan',
+          'created_at' => $item->created_at,
+          'icon' => 'heroicon-o-photograph',
+          'color' => 'purple',
+        ];
+      });
+
+    return $activities
+      ->merge($documents)
+      ->merge($news)
+      ->merge($gallery)
+      ->sortByDesc('created_at')
+      ->take(5);
   }
 }

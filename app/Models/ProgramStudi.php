@@ -34,7 +34,13 @@ class ProgramStudi extends Model
 
     public function akreditasiAktif()
     {
-        return $this->hasOne(AkreditasiProdi::class)->where('is_active', true)->latest();
+        return $this->hasOne(AkreditasiProdi::class)->where('is_active', true)->where('tanggal_berakhir', '>', now())->latest('tanggal_akreditasi');
+    }
+
+    public function akreditasiTerakhir()
+    {
+      return $this->hasOne(AkreditasiProdi::class)
+        ->latest('tanggal_akreditasi');
     }
 
     public function berita()

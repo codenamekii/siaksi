@@ -32,7 +32,7 @@ class StrukturOrganisasiSeeder extends Seeder
       'program_studi_id' => $prodiTI->id,
       'gambar' => 'struktur/prodi/struktur-ti.png',
       'judul' => 'Struktur Organisasi Prodi TI',
-      'deskripsi' => 'Struktur organisasi Program Studi Teknik Informatika',
+      'deskripsi' => 'Struktur organisasi Program Studi Teknik Industri',
       'is_active' => true
     ]);
 
@@ -40,8 +40,8 @@ class StrukturOrganisasiSeeder extends Seeder
       'level' => 'prodi',
       'program_studi_id' => $prodiTF->id,
       'gambar' => 'struktur/prodi/struktur-si.png',
-      'judul' => 'Struktur Organisasi Prodi SI',
-      'deskripsi' => 'Struktur organisasi Program Studi Sistem Informasi',
+      'judul' => 'Struktur Organisasi Prodi TF',
+      'deskripsi' => 'Struktur organisasi Program Studi Teknik Informatika',
       'is_active' => true
     ]);
 
@@ -49,8 +49,8 @@ class StrukturOrganisasiSeeder extends Seeder
       'level' => 'prodi',
       'program_studi_id' => $prodiTM->id,
       'gambar' => 'struktur/prodi/struktur-if.png',
-      'judul' => 'Struktur Organisasi Prodi IF',
-      'deskripsi' => 'Struktur organisasi Program Studi Informatika',
+      'judul' => 'Struktur Organisasi Prodi Teknik Mesin',
+      'deskripsi' => 'Struktur organisasi Program Studi Teknik Mesin',
       'is_active' => true
     ]);
   }

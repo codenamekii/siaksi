@@ -29,34 +29,34 @@ class JadwalAMISeeder extends Seeder
     // Jadwal AMI Prodi
     JadwalAMI::create([
       'fakultas_id' => $fakultas->id,
-      'program_studi_id' => $prodiTI->id,
+      'program_studi_id' => $prodiTF->id,
       'nama_kegiatan' => 'AMI Program Studi Teknik Informatika',
-      'deskripsi' => 'Audit mutu internal prodi TI',
+      'deskripsi' => 'Audit mutu internal prodi TF',
       'tanggal_mulai' => '2024-06-20',
       'tanggal_selesai' => '2024-06-21',
+      'tempat' => 'Ruang Prodi TF',
+      'status' => 'scheduled'
+    ]);
+
+    JadwalAMI::create([
+      'fakultas_id' => $fakultas->id,
+      'program_studi_id' => $prodiTI->id,
+      'nama_kegiatan' => 'AMI Program Studi Teknik Industri',
+      'deskripsi' => 'Audit mutu internal prodi TI',
+      'tanggal_mulai' => '2024-06-22',
+      'tanggal_selesai' => '2024-06-23',
       'tempat' => 'Ruang Prodi TI',
       'status' => 'scheduled'
     ]);
 
     JadwalAMI::create([
       'fakultas_id' => $fakultas->id,
-      'program_studi_id' => $prodiTI->id,
-      'nama_kegiatan' => 'AMI Program Studi Sistem Informasi',
-      'deskripsi' => 'Audit mutu internal prodi SI',
-      'tanggal_mulai' => '2024-06-22',
-      'tanggal_selesai' => '2024-06-23',
-      'tempat' => 'Ruang Prodi SI',
-      'status' => 'scheduled'
-    ]);
-
-    JadwalAMI::create([
-      'fakultas_id' => $fakultas->id,
       'program_studi_id' => $prodiTF->id,
-      'nama_kegiatan' => 'AMI Program Studi Informatika',
-      'deskripsi' => 'Audit mutu internal prodi IF',
+      'nama_kegiatan' => 'AMI Program Studi Teknik Informatika',
+      'deskripsi' => 'Audit mutu internal prodi TF',
       'tanggal_mulai' => '2024-06-24',
       'tanggal_selesai' => '2024-06-25',
-      'tempat' => 'Ruang Prodi IF',
+      'tempat' => 'Ruang Prodi TF',
       'status' => 'scheduled'
     ]);
   }

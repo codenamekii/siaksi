@@ -1,3 +1,4 @@
+{{-- resources/views/layouts/asesor.blade.php --}}
 <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
 
@@ -6,142 +7,248 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="csrf-token" content="{{ csrf_token() }}">
 
-  <title>{{ config('app.name', 'SIAKSI') }} - @yield('title', 'Asesor')</title>
+  <title>@yield('title', 'Dashboard') - SIAKSI Asesor</title>
 
   <!-- Fonts -->
   <link rel="preconnect" href="https://fonts.bunny.net">
-  <link href="https://fonts.bunny.net/css?family=inter:400,500,600,700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.bunny.net/css?family=figtree:400,500,600,700,800&display=swap" rel="stylesheet" />
 
-  <!-- Styles & Scripts -->
+  <!-- Scripts -->
   @vite(['resources/css/app.css', 'resources/js/app.js'])
-  @livewireStyles
+
+  <!-- Alpine.js for interactivity -->
+  <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+
+  <!-- Additional Styles -->
+  <style>
+    /* Custom scrollbar */
+    ::-webkit-scrollbar {
+      width: 10px;
+      height: 10px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: #f1f1f1;
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: linear-gradient(180deg, #2563eb 0%, #4f46e5 100%);
+      border-radius: 5px;
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+      background: linear-gradient(180deg, #1d4ed8 0%, #4338ca 100%);
+    }
+
+    /* Smooth scroll behavior */
+    html {
+      scroll-behavior: smooth;
+    }
+
+    /* Loading animation */
+    .loader {
+      border-top-color: #3b82f6;
+      -webkit-animation: spinner 1.5s linear infinite;
+      animation: spinner 1.5s linear infinite;
+    }
+
+    @-webkit-keyframes spinner {
+      0% {
+        -webkit-transform: rotate(0deg);
+      }
+
+      100% {
+        -webkit-transform: rotate(360deg);
+      }
+    }
+
+    @keyframes spinner {
+      0% {
+        transform: rotate(0deg);
+      }
+
+      100% {
+        transform: rotate(360deg);
+      }
+    }
+
+    /* Page transition */
+    .page-enter {
+      opacity: 0;
+      transform: translateY(10px);
+    }
+
+    .page-enter-active {
+      transition: all 0.3s ease-out;
+    }
+
+    .page-enter-to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  </style>
+
+  @stack('styles')
 </head>
 
-<body class="font-sans antialiased">
-  <div class="min-h-screen bg-gray-100">
-    <!-- Navigation -->
-    <nav class="bg-white shadow-lg">
-      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="flex justify-between h-16">
-          <!-- Logo & Nav Links -->
-          <div class="flex">
-            <div class="flex-shrink-0 flex items-center">
-              <a href="{{ route('asesor.dashboard') }}" class="text-xl font-bold text-gray-800">
-                SIAKSI
-              </a>
+<body class="font-sans antialiased bg-gray-50">
+  <div class="min-h-screen flex flex-col">
+    {{-- Navbar Component --}}
+    <x-asesor.navbar />
+
+    {{-- Main Content with padding for fixed navbar --}}
+    <main class="flex-1 pt-16 page-enter page-enter-active page-enter-to">
+      {{-- Breadcrumb Section --}}
+      @hasSection('breadcrumb')
+        <div class="bg-white shadow-sm border-b border-gray-200">
+          <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="py-3">
+              @yield('breadcrumb')
             </div>
+          </div>
+        </div>
+      @endif
 
-            <div class="hidden space-x-8 sm:-my-px sm:ml-10 sm:flex">
-              <x-nav-link :href="route('asesor.dashboard')" :active="request()->routeIs('asesor.dashboard')">
-                Dashboard
-              </x-nav-link>
+      {{-- Page Header --}}
+      @hasSection('header')
+        <header class="bg-white shadow-sm">
+          <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
+            @yield('header')
+          </div>
+        </header>
+      @endif
 
-              <!-- Dropdown Dokumen Institusi -->
-              <div class="relative" x-data="{ open: false }">
-                <button @click="open = !open"
-                  class="inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium transition duration-150 ease-in-out"
-                  :class="open ||
-                      '{{ request()->routeIs('asesor.dokumen-institusi') ? 'border-indigo-400 text-gray-900' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300' }}'">
-                  Dokumen Institusi
-                  <svg class="ml-1 h-4 w-4" fill="currentColor" viewBox="0 0 20 20">
+      {{-- Flash Messages --}}
+      @if (session('success'))
+        <div x-data="{ show: true }" x-show="show" x-init="setTimeout(() => show = false, 5000)"
+          x-transition:enter="transition ease-out duration-300"
+          x-transition:enter-start="opacity-0 transform translate-y-2"
+          x-transition:enter-end="opacity-100 transform translate-y-0"
+          x-transition:leave="transition ease-in duration-200"
+          x-transition:leave-start="opacity-100 transform translate-y-0"
+          x-transition:leave-end="opacity-0 transform translate-y-2" class="fixed top-20 right-4 z-50">
+          <div class="bg-green-50 border-l-4 border-green-400 p-4 rounded-lg shadow-lg">
+            <div class="flex items-center">
+              <div class="flex-shrink-0">
+                <svg class="h-5 w-5 text-green-400" fill="currentColor" viewBox="0 0 20 20">
+                  <path fill-rule="evenodd"
+                    d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                    clip-rule="evenodd" />
+                </svg>
+              </div>
+              <div class="ml-3">
+                <p class="text-sm text-green-800 font-medium">{{ session('success') }}</p>
+              </div>
+              <div class="ml-auto pl-3">
+                <button @click="show = false" class="text-green-400 hover:text-green-600">
+                  <svg class="h-4 w-4" fill="currentColor" viewBox="0 0 20 20">
                     <path fill-rule="evenodd"
-                      d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
+                      d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
                       clip-rule="evenodd" />
                   </svg>
                 </button>
-
-                <div x-show="open" @click.away="open = false" x-transition
-                  class="absolute z-50 mt-2 w-48 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5">
-                  <div class="py-1">
-                    <a href="{{ route('asesor.dokumen-institusi') }}#kebijakan"
-                      class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
-                      Kebijakan SPMI
-                    </a>
-                    <a href="{{ route('asesor.dokumen-institusi') }}#standar"
-                      class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
-                      Standar Mutu
-                    </a>
-                  </div>
-                </div>
               </div>
-
-              <x-nav-link :href="route('asesor.dokumen-fakultas')" :active="request()->routeIs('asesor.dokumen-fakultas')">
-                Dokumen Fakultas
-              </x-nav-link>
-
-              <x-nav-link :href="route('asesor.dokumen-prodi')" :active="request()->routeIs('asesor.dokumen-prodi')">
-                Dokumen Program Studi
-              </x-nav-link>
-
-              <x-nav-link :href="route('asesor.informasi-tambahan')" :active="request()->routeIs('asesor.informasi-tambahan')">
-                Informasi Tambahan
-              </x-nav-link>
             </div>
           </div>
+        </div>
+      @endif
 
-          <!-- User Menu -->
-          <div class="hidden sm:flex sm:items-center sm:ml-6">
-            <div class="ml-3 relative" x-data="{ open: false }">
-              <button @click="open = !open"
-                class="flex items-center text-sm font-medium text-gray-500 hover:text-gray-700">
-                <span>{{ Auth::user()->name }}</span>
-                <svg class="ml-1 h-4 w-4" fill="currentColor" viewBox="0 0 20 20">
+      @if (session('error'))
+        <div x-data="{ show: true }" x-show="show" x-init="setTimeout(() => show = false, 5000)"
+          x-transition:enter="transition ease-out duration-300"
+          x-transition:enter-start="opacity-0 transform translate-y-2"
+          x-transition:enter-end="opacity-100 transform translate-y-0"
+          x-transition:leave="transition ease-in duration-200"
+          x-transition:leave-start="opacity-100 transform translate-y-0"
+          x-transition:leave-end="opacity-0 transform translate-y-2" class="fixed top-20 right-4 z-50">
+          <div class="bg-red-50 border-l-4 border-red-400 p-4 rounded-lg shadow-lg">
+            <div class="flex items-center">
+              <div class="flex-shrink-0">
+                <svg class="h-5 w-5 text-red-400" fill="currentColor" viewBox="0 0 20 20">
                   <path fill-rule="evenodd"
-                    d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
+                    d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
                     clip-rule="evenodd" />
                 </svg>
-              </button>
-
-              <div x-show="open" @click.away="open = false" x-transition
-                class="absolute right-0 z-50 mt-2 w-48 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5">
-                <div class="py-1">
-                  <form method="POST" action="{{ route('logout') }}">
-                    @csrf
-                    <button type="submit"
-                      class="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
-                      Logout
-                    </button>
-                  </form>
-                </div>
+              </div>
+              <div class="ml-3">
+                <p class="text-sm text-red-800 font-medium">{{ session('error') }}</p>
+              </div>
+              <div class="ml-auto pl-3">
+                <button @click="show = false" class="text-red-400 hover:text-red-600">
+                  <svg class="h-4 w-4" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd"
+                      d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
+                      clip-rule="evenodd" />
+                  </svg>
+                </button>
               </div>
             </div>
           </div>
-
-          <!-- Mobile Hamburger -->
-          <div class="-mr-2 flex items-center sm:hidden">
-            <button @click="open = !open"
-              class="inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100">
-              <svg class="h-6 w-6" stroke="currentColor" fill="none" viewBox="0 0 24 24">
-                <path :class="{ 'hidden': open, 'inline-flex': !open }" class="inline-flex" stroke-linecap="round"
-                  stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
-                <path :class="{ 'hidden': !open, 'inline-flex': open }" class="hidden" stroke-linecap="round"
-                  stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-              </svg>
-            </button>
-          </div>
         </div>
-      </div>
-    </nav>
+      @endif
 
-    <!-- Page Content -->
-    <main>
-      @yield('content')
+      {{-- Main Content Area --}}
+      <div class="flex-1">
+        @yield('content')
+      </div>
     </main>
 
-    <!-- Footer -->
-    <footer class="bg-white mt-12">
-      <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
-        <div class="border-t border-gray-200 pt-6">
-          <p class="text-center text-sm text-gray-500">
-            © {{ date('Y') }} SIAKSI - Sistem Informasi Dokumen Akreditasi. All rights reserved.
-          </p>
-        </div>
-      </div>
-    </footer>
+    {{-- Footer Component --}}
+    <x-asesor.footer />
+
+    {{-- Return to Original Dashboard Button --}}
+    @include('components.return-to-original-button')
   </div>
 
-  @livewireScripts
-  <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+  {{-- Loading Overlay --}}
+  <div id="loading-overlay" class="fixed inset-0 bg-gray-900 bg-opacity-50 z-[100] flex items-center justify-center">
+    <div class="bg-white rounded-lg p-6 flex flex-col items-center">
+      <div class="loader ease-linear rounded-full border-4 border-t-4 border-gray-200 h-12 w-12 mb-4"></div>
+      <p class="text-gray-700 font-semibold">Loading...</p>
+    </div>
+  </div>
+
+  {{-- Global Scripts --}}
+  <script>
+    // Show loading overlay for AJAX requests
+    document.addEventListener('DOMContentLoaded', function() {
+      // Add loading state to all forms
+      const forms = document.querySelectorAll('form');
+      forms.forEach(form => {
+        form.addEventListener('submit', function() {
+          if (!form.classList.contains('no-loading')) {
+            document.getElementById('loading-overlay').classList.remove('hidden');
+          }
+        });
+      });
+
+      // Add loading state to specific links
+      const loadingLinks = document.querySelectorAll('a.with-loading');
+      loadingLinks.forEach(link => {
+        link.addEventListener('click', function() {
+          document.getElementById('loading-overlay').classList.remove('hidden');
+        });
+      });
+    });
+
+    // Hide loading overlay when page is fully loaded
+    window.addEventListener('load', function() {
+      document.getElementById('loading-overlay').classList.add('hidden');
+    });
+
+    // Prevent multiple form submissions
+    document.querySelectorAll('form').forEach(form => {
+      form.addEventListener('submit', function(e) {
+        const submitButton = form.querySelector('[type="submit"]');
+        if (submitButton && !submitButton.disabled) {
+          submitButton.disabled = true;
+          submitButton.innerHTML =
+            '<svg class="animate-spin h-5 w-5 mr-2 inline" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" fill="none"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg> Processing...';
+        }
+      });
+    });
+  </script>
+
   @stack('scripts')
 </body>
 

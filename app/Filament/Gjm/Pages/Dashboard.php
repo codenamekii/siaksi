@@ -20,6 +20,7 @@ class Dashboard extends BaseDashboard
       \App\Filament\Gjm\Widgets\UpcomingAMI::class,
       \App\Filament\Gjm\Widgets\ProgramStudiStatus::class,
       \App\Filament\Gjm\Widgets\RecentDocuments::class,
+      \App\Filament\Gjm\Widgets\UjmAccessWidget::class, // Added new widget
     ];
   }
 

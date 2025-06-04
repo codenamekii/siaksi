@@ -6,8 +6,38 @@ use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
 {
-    public function run(): void
-    {
-        $this->call([UserSeeder::class, FakultasSeeder::class, ProgramStudiSeeder::class, AkreditasiProdiSeeder::class, BeritaSeeder::class, DokumenSeeder::class, JadwalAMISeeder::class, TimGJMSeeder::class, TimUJMSeeder::class, TautanCepatSeeder::class, StrukturOrganisasiSeeder::class, DosenSeeder::class, TenagaKependidikanSeeder::class]);
-    }
+  /**
+   * Seed the application's database.
+   */
+  public function run(): void
+  {
+    // Call seeders in order of dependencies
+    $this->call([
+      // Basic data
+      UserSeeder::class,
+      FakultasSeeder::class,
+      ProgramStudiSeeder::class,
+
+      // Academic data
+      AkreditasiProdiSeeder::class,
+      DosenSeeder::class,
+      TenagaKependidikanSeeder::class,
+
+      // Document and content
+      DokumenSeeder::class,
+      BeritaSeeder::class,
+
+      // Organization and schedule
+      TimGJMSeeder::class,
+      TimUJMSeeder::class,
+      JadwalAMISeeder::class,
+      StrukturOrganisasiSeeder::class,
+
+      // Others
+      TautanCepatSeeder::class,
+
+      // Quick fix for asesor
+      QuickAsesorDataSeeder::class,
+    ]);
+  }
 }

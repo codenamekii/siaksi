@@ -2,69 +2,48 @@
 
 namespace App\Filament\Ujm\Widgets;
 
+use Filament\Widgets\StatsOverviewWidget as BaseWidget;
+use Filament\Widgets\StatsOverviewWidget\Stat;
 use App\Models\Dokumen;
-use Filament\Widgets\ChartWidget;
 use Illuminate\Support\Facades\Auth;
 
-class DocumentStatus extends ChartWidget
+class DocumentStatus extends BaseWidget
 {
-  protected static ?string $heading = 'Status Dokumen';
-
-  protected static ?int $sort = 3;
-
-  protected function getData(): array
+  protected function getStats(): array
   {
-    $prodiId = Auth::user()->programStudi?->id;
+    $prodiId = Auth::user()->program_studi_id;
 
-    if (!$prodiId) {
-      return [
-        'datasets' => [
-          [
-            'label' => 'Dokumen',
-            'data' => [0, 0],
-          ],
-        ],
-        'labels' => ['Terlihat Asesor', 'Tidak Terlihat'],
-      ];
-    }
-
-    $visibleToAsesor = Dokumen::where('program_studi_id', $prodiId)
+    $totalDokumen = Dokumen::where('program_studi_id', $prodiId)->count();
+    $dokumenVisible = Dokumen::where('program_studi_id', $prodiId)
       ->where('is_visible_to_asesor', true)
       ->count();
-
-    $notVisible = Dokumen::where('program_studi_id', $prodiId)
-      ->where('is_visible_to_asesor', false)
+    $dokumenFile = Dokumen::where('program_studi_id', $prodiId)
+      ->where('tipe', 'file')
+      ->count();
+    $dokumenUrl = Dokumen::where('program_studi_id', $prodiId)
+      ->where('tipe', 'url')
       ->count();
 
     return [
-      'datasets' => [
-        [
-          'label' => 'Dokumen',
-          'data' => [$visibleToAsesor, $notVisible],
-          'backgroundColor' => [
-            '#10b981', // Green for visible
-            '#ef4444', // Red for not visible
-          ],
-        ],
-      ],
-      'labels' => ['Terlihat Asesor', 'Tidak Terlihat'],
-    ];
-  }
+      Stat::make('Total Dokumen', $totalDokumen)
+        ->description('Dokumen program studi')
+        ->descriptionIcon('heroicon-m-document-text')
+        ->color('primary'),
 
-  protected function getType(): string
-  {
-    return 'doughnut';
-  }
+      Stat::make('Visible ke Asesor', $dokumenVisible)
+        ->description('Dapat dilihat asesor')
+        ->descriptionIcon('heroicon-m-eye')
+        ->color('success'),
 
-  protected function getOptions(): array
-  {
-    return [
-      'plugins' => [
-        'legend' => [
-          'display' => true,
-          'position' => 'bottom',
-        ],
-      ],
+      Stat::make('Dokumen File', $dokumenFile)
+        ->description('Upload file')
+        ->descriptionIcon('heroicon-m-paper-clip')
+        ->color('info'),
+
+      Stat::make('Dokumen URL', $dokumenUrl)
+        ->description('Link eksternal')
+        ->descriptionIcon('heroicon-m-link')
+        ->color('warning'),
     ];
   }
 }

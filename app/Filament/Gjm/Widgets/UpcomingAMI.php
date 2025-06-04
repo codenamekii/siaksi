@@ -2,29 +2,22 @@
 
 namespace App\Filament\Gjm\Widgets;
 
-use App\Models\JadwalAMI;
 use Filament\Widgets\Widget;
+use App\Models\JadwalAMI;
 
 class UpcomingAMI extends Widget
 {
   protected static string $view = 'filament.gjm.widgets.upcoming-ami';
 
-  protected static ?int $sort = 3;
+  protected int | string | array $columnSpan = 'full';
 
-  protected int | string | array $columnSpan = [
-    'md' => 2,
-    'xl' => 3,
-  ];
+  protected static ?int $sort = 2;
 
-  protected function getViewData(): array
+  public function getUpcomingAMI()
   {
-    return [
-      'upcomingAMI' => JadwalAMI::with('programStudi')
-        ->where('status', 'scheduled')
-        ->where('tanggal_mulai', '>=', now())
-        ->orderBy('tanggal_mulai')
-        ->limit(5)
-        ->get(),
-    ];
+    return JadwalAMI::where('tanggal_mulai', '>=', now())
+      ->orderBy('tanggal_mulai')
+      ->take(5)
+      ->get();
   }
 }

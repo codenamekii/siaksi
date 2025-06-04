@@ -2,56 +2,39 @@
 
 namespace App\Filament\Gjm\Widgets;
 
+use Filament\Widgets\StatsOverviewWidget as BaseWidget;
+use Filament\Widgets\StatsOverviewWidget\Stat;
 use App\Models\ProgramStudi;
-use Filament\Widgets\ChartWidget;
 
-class ProgramStudiStatus extends ChartWidget
+class ProgramStudiStatus extends BaseWidget
 {
-  protected static ?string $heading = 'Status Akreditasi Program Studi';
-
-  protected static ?int $sort = 4;
-
-  protected function getData(): array
+  protected function getStats(): array
   {
-    $statusCounts = ProgramStudi::with('akreditasiAktif')
-      ->where('is_active', true)
-      ->get()
-      ->groupBy(function ($prodi) {
-        return $prodi->akreditasiAktif?->status_akreditasi ?? 'Belum Terakreditasi';
-      })
-      ->map(fn($group) => $group->count());
+    $totalProdi = ProgramStudi::count();
+    $prodiAktif = ProgramStudi::where('is_active', true)->count();
+    $prodiWithUjm = ProgramStudi::whereNotNull('ujm_id')->count();
+    $prodiTerakreditasi = ProgramStudi::whereHas('akreditasiAktif')->count();
 
     return [
-      'datasets' => [
-        [
-          'label' => 'Program Studi',
-          'data' => $statusCounts->values(),
-          'backgroundColor' => [
-            '#10b981', // Unggul - Green
-            '#3b82f6', // Baik Sekali - Blue
-            '#f59e0b', // Baik - Amber
-            '#ef4444', // Belum - Red
-          ],
-        ],
-      ],
-      'labels' => $statusCounts->keys(),
-    ];
-  }
+      Stat::make('Total Program Studi', $totalProdi)
+        ->description('Semua program studi')
+        ->descriptionIcon('heroicon-m-academic-cap')
+        ->color('primary'),
 
-  protected function getType(): string
-  {
-    return 'doughnut';
-  }
+      Stat::make('Prodi Aktif', $prodiAktif)
+        ->description('Status aktif')
+        ->descriptionIcon('heroicon-m-check-circle')
+        ->color('success'),
 
-  protected function getOptions(): array
-  {
-    return [
-      'plugins' => [
-        'legend' => [
-          'display' => true,
-          'position' => 'bottom',
-        ],
-      ],
+      Stat::make('Prodi dengan UJM', $prodiWithUjm)
+        ->description('Memiliki UJM')
+        ->descriptionIcon('heroicon-m-users')
+        ->color('info'),
+
+      Stat::make('Prodi Terakreditasi', $prodiTerakreditasi)
+        ->description('Akreditasi aktif')
+        ->descriptionIcon('heroicon-m-check-badge')
+        ->color('warning'),
     ];
   }
 }
