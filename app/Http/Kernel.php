@@ -1,4 +1,5 @@
 <?php
+// Lokasi file: app/Http/Kernel.php
 
 namespace App\Http;
 
@@ -56,5 +57,7 @@ class Kernel extends HttpKernel
     'gjm' => \App\Http\Middleware\RedirectIfNotGJM::class,
     'ujm' => \App\Http\Middleware\RedirectIfNotUJM::class,
     'asesor' => \App\Http\Middleware\RedirectIfNotAsesor::class,
+    'ujm.flexible' => \App\Http\Middleware\RedirectIfNotUJMOrAuthorized::class,
+    'asesor.flexible' => \App\Http\Middleware\RedirectIfNotAsesorOrAuthorized::class,
   ];
 }

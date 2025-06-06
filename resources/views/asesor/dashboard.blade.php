@@ -1,302 +1,534 @@
+{{-- Lokasi file: resources/views/asesor/dashboard.blade.php --}}
+
 @extends('layouts.asesor')
 
-@section('title', 'Dashboard')
-
 @section('content')
-  <div class="min-h-screen bg-gradient-to-br from-blue-50 via-white to-indigo-50">
-    {{-- Hero Section --}}
-    <div class="relative overflow-hidden bg-gradient-to-r from-blue-600 to-indigo-700 pb-32">
-      <div class="absolute inset-0">
-        <img src="{{ asset('storage/login.jpg') }}" alt="Hero Background" class="w-full h-full object-cover opacity-30">
-      </div>
+  <!-- Hero Section with Background Image -->
+  <section class="relative min-h-screen flex items-center"
+    style="background-image: linear-gradient(rgba(17, 24, 39, 0.7), rgba(17, 24, 39, 0.7)), url('{{ asset('storage/UIMHero.jpg') }}'); background-size: cover; background-position: center; background-attachment: fixed;">
+    <!-- Decorative Elements -->
+    <div class="absolute inset-0 bg-gradient-to-b from-transparent via-gray-900/50 to-gray-900"></div>
 
-      <div class="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 pt-12 pb-8">
-        <div class="text-center">
-          <h1 class="text-4xl font-bold tracking-tight text-white sm:text-5xl md:text-6xl">
-            Dashboard Asesor
-          </h1>
-          <p class="mt-3 max-w-2xl mx-auto text-xl text-blue-100 sm:mt-4">
-            Selamat datang, {{ auth()->user()->name }}
-          </p>
-          <p class="mt-2 text-blue-200">
-            Sistem Informasi Akreditasi - {{ now()->format('l, d F Y') }}
-          </p>
-        </div>
-      </div>
-    </div>
-
-    {{-- Quick Stats Cards --}}
-    <div class="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 -mt-24">
-      <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
-        {{-- Total Fakultas Card --}}
-        <div
-          class="relative overflow-hidden rounded-2xl bg-white p-6 shadow-xl transition-all hover:shadow-2xl hover:-translate-y-1">
-          <div class="absolute top-0 right-0 -mt-4 -mr-4 h-24 w-24 rounded-full bg-blue-500 opacity-10"></div>
-          <div class="relative">
-            <div class="flex items-center">
-              <div class="flex h-12 w-12 items-center justify-center rounded-xl bg-blue-500 text-white">
-                <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                    d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4">
-                  </path>
-                </svg>
-              </div>
-              <div class="ml-4">
-                <p class="text-sm font-medium text-gray-500">Total Fakultas</p>
-                <p class="text-2xl font-bold text-gray-900">{{ $totalFakultas ?? 0 }}</p>
-              </div>
-            </div>
-            <div class="mt-4 flex items-center text-sm">
-              <span class="text-green-600 font-medium">
-                <svg class="inline h-4 w-4" fill="currentColor" viewBox="0 0 20 20">
+    <!-- Hero Content -->
+    <div class="relative z-10 w-full">
+      <div class="max-w-7xl mx-auto px-4 py-8 sm:px-6 lg:px-8">
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+          <!-- Left Content -->
+          <div class="text-white space-y-8">
+            <!-- Welcome Badge -->
+            @if (session('gjm_original_user') || session('ujm_original_user'))
+              <div
+                class="inline-flex items-center px-4 py-2 bg-blue-600/20 backdrop-blur-md rounded-full border border-blue-500/30">
+                <svg class="w-4 h-4 mr-2 text-blue-400" fill="currentColor" viewBox="0 0 20 20">
                   <path fill-rule="evenodd"
-                    d="M5.293 9.707a1 1 0 010-1.414l4-4a1 1 0 011.414 0l4 4a1 1 0 01-1.414 1.414L11 7.414V15a1 1 0 11-2 0V7.414L6.707 9.707a1 1 0 01-1.414 0z"
+                    d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
                     clip-rule="evenodd"></path>
                 </svg>
-                100% Aktif
-              </span>
-            </div>
-          </div>
-        </div>
+                <span class="text-sm">
+                  @if (session('gjm_original_user'))
+                    Akses dari Dashboard GJM
+                  @else
+                    Akses dari Dashboard UJM
+                  @endif
+                </span>
+              </div>
+            @endif
 
-        {{-- Total Program Studi Card --}}
-        <div
-          class="relative overflow-hidden rounded-2xl bg-white p-6 shadow-xl transition-all hover:shadow-2xl hover:-translate-y-1">
-          <div class="absolute top-0 right-0 -mt-4 -mr-4 h-24 w-24 rounded-full bg-indigo-500 opacity-10"></div>
-          <div class="relative">
-            <div class="flex items-center">
-              <div class="flex h-12 w-12 items-center justify-center rounded-xl bg-indigo-500 text-white">
-                <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                    d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253">
+            <!-- Main Title -->
+            <div>
+              <h1 class="text-3xl md:text-6xl font-bold leading-tight">
+                Sistem Informasi Dokumen Akreditasi
+              </h1>
+              <p class="mt-6 text-lg md:text-xl text-gray-300 leading-relaxed">
+                Platform terpadu untuk mengelola dan mengakses dokumen akreditasi fakultas Teknik dan program studi
+                di Universitas Islam Makassar dengan mudah dan efisien.
+              </p>
+            </div>
+
+            <!-- CTA Buttons -->
+            <div class="flex flex-col sm:flex-row gap-4">
+              <a href="#features"
+                class="inline-flex items-center justify-center px-8 py-4 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transform hover:scale-105 transition-all duration-300 shadow-xl">
+                Mulai Eksplorasi
+                <svg class="ml-2 w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6">
                   </path>
                 </svg>
-              </div>
-              <div class="ml-4">
-                <p class="text-sm font-medium text-gray-500">Program Studi</p>
-                <p class="text-2xl font-bold text-gray-900">{{ $totalProdi ?? 0 }}</p>
-              </div>
-            </div>
-            <div class="mt-4 flex items-center text-sm">
-              <span class="text-indigo-600 font-medium">
-                {{ $prodiTerakreditasi ?? 0 }} Terakreditasi
-              </span>
-            </div>
-          </div>
-        </div>
-
-        {{-- Total Dokumen Card --}}
-        <div
-          class="relative overflow-hidden rounded-2xl bg-white p-6 shadow-xl transition-all hover:shadow-2xl hover:-translate-y-1">
-          <div class="absolute top-0 right-0 -mt-4 -mr-4 h-24 w-24 rounded-full bg-green-500 opacity-10"></div>
-          <div class="relative">
-            <div class="flex items-center">
-              <div class="flex h-12 w-12 items-center justify-center rounded-xl bg-green-500 text-white">
-                <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              </a>
+              <a href="#statistik"
+                class="inline-flex items-center justify-center px-4 py-3 bg-white/10 backdrop-blur-md text-white font-semibold rounded-lg border border-white/30 hover:bg-white/20 transition-all duration-300">
+                Lihat Statistik
+                <svg class="ml-2 w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                    d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z">
+                    d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z">
                   </path>
                 </svg>
-              </div>
-              <div class="ml-4">
-                <p class="text-sm font-medium text-gray-500">Total Dokumen</p>
-                <p class="text-2xl font-bold text-gray-900">{{ $totalDokumen ?? 0 }}</p>
-              </div>
-            </div>
-            <div class="mt-4 flex items-center justify-between text-sm">
-              <span class="text-gray-600">Dapat diakses</span>
-              <span class="text-green-600 font-medium">{{ $dokumenVisible ?? 0 }}</span>
+              </a>
             </div>
           </div>
+
+          <!-- Right Content - Stats -->
+          {{-- <div class="hidden lg:block">
+            <div class="grid grid-cols-2 gap-6">
+              <div
+                class="bg-white/10 backdrop-blur-md rounded-2xl p-6 border border-white/20 transform hover:scale-105 transition-all duration-300">
+                <div class="text-4xl font-bold text-white mb-2">{{ $totalDokumen ?? 0 }}</div>
+                <div class="text-gray-300">Total Dokumen</div>
+                <div class="mt-4 h-1 bg-white/20 rounded-full overflow-hidden">
+                  <div class="h-full bg-blue-500 rounded-full" style="width: 75%"></div>
+                </div>
+              </div>
+              <div
+                class="bg-white/10 backdrop-blur-md rounded-2xl p-6 border border-white/20 transform hover:scale-105 transition-all duration-300">
+                <div class="text-4xl font-bold text-white mb-2">{{ $totalFakultas ?? 0 }}</div>
+                <div class="text-gray-300">Fakultas</div>
+                <div class="mt-4 h-1 bg-white/20 rounded-full overflow-hidden">
+                  <div class="h-full bg-green-500 rounded-full" style="width: 100%"></div>
+                </div>
+              </div>
+              <div
+                class="bg-white/10 backdrop-blur-md rounded-2xl p-6 border border-white/20 transform hover:scale-105 transition-all duration-300">
+                <div class="text-4xl font-bold text-white mb-2">{{ $totalProdi ?? 0 }}</div>
+                <div class="text-gray-300">Program Studi</div>
+                <div class="mt-4 h-1 bg-white/20 rounded-full overflow-hidden">
+                  <div class="h-full bg-purple-500 rounded-full" style="width: 85%"></div>
+                </div>
+              </div>
+              <div
+                class="bg-white/10 backdrop-blur-md rounded-2xl p-6 border border-white/20 transform hover:scale-105 transition-all duration-300">
+                <div class="text-4xl font-bold text-white mb-2">{{ $prodiTerakreditasi ?? 0 }}</div>
+                <div class="text-gray-300">Terakreditasi</div>
+                <div class="mt-4 h-1 bg-white/20 rounded-full overflow-hidden">
+                  <div class="h-full bg-yellow-500 rounded-full" style="width: 90%"></div>
+                </div>
+              </div>
+            </div>
+          </div> --}}
         </div>
 
-        {{-- Akreditasi Status Card --}}
-        <div
-          class="relative overflow-hidden rounded-2xl bg-white p-6 shadow-xl transition-all hover:shadow-2xl hover:-translate-y-1">
-          <div class="absolute top-0 right-0 -mt-4 -mr-4 h-24 w-24 rounded-full bg-purple-500 opacity-10"></div>
-          <div class="relative">
-            <div class="flex items-center">
-              <div class="flex h-12 w-12 items-center justify-center rounded-xl bg-purple-500 text-white">
-                <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                    d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z">
-                  </path>
-                </svg>
-              </div>
-              <div class="ml-4">
-                <p class="text-sm font-medium text-gray-500">Status Akreditasi</p>
-                <p class="text-2xl font-bold text-gray-900">{{ $akreditasiAktif ?? 0 }}</p>
-              </div>
-            </div>
-            <div class="mt-4">
-              <div class="flex items-center justify-between text-xs">
-                <span class="text-gray-600">Unggul</span>
-                <span class="font-medium text-purple-600">{{ $akreditasiUnggul ?? 0 }}</span>
-              </div>
-              <div class="flex items-center justify-between text-xs mt-1">
-                <span class="text-gray-600">Baik Sekali</span>
-                <span class="font-medium text-blue-600">{{ $akreditasiBaikSekali ?? 0 }}</span>
-              </div>
-            </div>
-          </div>
+        <!-- Scroll Indicator -->
+        <div class="absolute bottom-10 left-1/2 transform -translate-x-1/2 animate-bounce">
+          <svg class="w-6 h-6 text-white/70" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"></path>
+          </svg>
         </div>
       </div>
     </div>
+  </section>
 
-    {{-- Recent Documents & Activities --}}
-    <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-12">
-      <div class="grid grid-cols-1 gap-8 lg:grid-cols-3">
-        {{-- Recent Documents --}}
-        <div class="lg:col-span-2">
-          <div class="bg-white rounded-2xl shadow-xl overflow-hidden">
-            <div class="bg-gradient-to-r from-blue-600 to-indigo-600 px-6 py-4">
-              <h2 class="text-xl font-semibold text-white flex items-center">
-                <svg class="h-5 w-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                    d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2">
-                  </path>
-                </svg>
-                Dokumen Terbaru
-              </h2>
+  <!-- Features Section -->
+  <section id="features" class="py-24 bg-gradient-to-b from-gray-900 to-gray-800">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="text-center  mt-6 mb-8">
+        <h2 class="text-xl font-bold text-black mb-4">Fitur Unggulan</h2>
+        <div class="w-24 h-1 bg-blue-500 mx-auto mb-6"></div>
+        <p class="text-xl text-gray-700 max-w-2xl mx-auto">
+          Akses cepat dan mudah ke berbagai dokumen akreditasi yang Anda butuhkan
+        </p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+        <!-- Feature 1 -->
+        <a href="{{ route('asesor.dokumen-institusi') }}" class="group">
+          <div
+            class="bg-gray-800/50 backdrop-blur-sm rounded-md p-8 border border-gray-700 hover:border-blue-500 transform hover:-translate-y-2 transition-all duration-300">
+            <div
+              class="w-16 h-16 bg-blue-600/20 rounded-xl flex items-center justify-center mb-6 group-hover:bg-blue-600/30 transition-colors">
+              <svg class="w-8 h-8 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4">
+                </path>
+              </svg>
             </div>
-            <div class="p-6">
-              <div class="space-y-4">
-                @forelse($recentDocuments ?? [] as $doc)
-                  <div
-                    class="flex items-center justify-between p-4 bg-gray-50 rounded-xl hover:bg-gray-100 transition-colors">
-                    <div class="flex items-center space-x-4">
-                      <div class="flex-shrink-0">
-                        <div class="h-10 w-10 rounded-lg bg-blue-100 flex items-center justify-center">
-                          <svg class="h-6 w-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                              d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z">
-                            </path>
-                          </svg>
-                        </div>
-                      </div>
-                      <div>
-                        <h4 class="text-sm font-medium text-gray-900">{{ $doc->nama }}</h4>
-                        <p class="text-xs text-gray-500">{{ $doc->created_at->diffForHumans() }}</p>
-                      </div>
-                    </div>
-                    <span
-                      class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium 
-                                    {{ $doc->level == 'universitas'
-                                        ? 'bg-purple-100 text-purple-800'
-                                        : ($doc->level == 'fakultas'
-                                            ? 'bg-blue-100 text-blue-800'
-                                            : 'bg-green-100 text-green-800') }}">
-                      {{ ucfirst($doc->level) }}
-                    </span>
-                  </div>
-                @empty
-                  <div class="text-center py-8">
-                    <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor"
-                      viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                        d="M9 13h6m-3-3v6m5 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z">
-                      </path>
-                    </svg>
-                    <p class="mt-2 text-sm text-gray-500">Belum ada dokumen terbaru</p>
-                  </div>
-                @endforelse
-              </div>
+            <h3 class="text-xl font-semibold text-black mb-3">Dokumen Institusi</h3>
+            <p class="text-gray-400 mb-4">Kebijakan SPMI, standar mutu universitas, dan dokumen payung institusi</p>
+            <div class="flex items-center text-blue-400 font-medium group-hover:gap-3 transition-all">
+              Akses Dokumen
+              <svg class="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" fill="none"
+                stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path>
+              </svg>
             </div>
           </div>
+        </a>
+
+        <!-- Feature 2 -->
+        <a href="{{ route('asesor.dokumen-fakultas') }}" class="group">
+          <div
+            class="bg-gray-800/50 backdrop-blur-sm rounded-md p-8 border border-gray-700 hover:border-green-500 transform hover:-translate-y-2 transition-all duration-300">
+            <div
+              class="w-16 h-16 bg-green-600/20 rounded-xl flex items-center justify-center mb-6 group-hover:bg-green-600/30 transition-colors">
+              <svg class="w-8 h-8 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M8 14v3m4-3v3m4-3v3M3 21h18M3 10h18M3 7l9-4 9 4M4 10h16v11H4V10z"></path>
+              </svg>
+            </div>
+            <h3 class="text-xl font-semibold text-black mb-3">Dokumen Fakultas</h3>
+            <p class="text-gray-400 mb-4">Laporan AMI, rencana strategis, dan dokumen mutu fakultas</p>
+            <div class="flex items-center text-green-400 font-medium group-hover:gap-3 transition-all">
+              Akses Dokumen
+              <svg class="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" fill="none"
+                stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3">
+                </path>
+              </svg>
+            </div>
+          </div>
+        </a>
+
+        <!-- Feature 3 -->
+        <a href="{{ route('asesor.dokumen-prodi') }}" class="group">
+          <div
+            class="bg-gray-800/50 backdrop-blur-sm rounded-md p-8 border border-gray-700 hover:border-purple-500 transform hover:-translate-y-2 transition-all duration-300">
+            <div
+              class="w-16 h-16 bg-purple-600/20 rounded-xl flex items-center justify-center mb-6 group-hover:bg-purple-600/30 transition-colors">
+              <svg class="w-8 h-8 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253">
+                </path>
+              </svg>
+            </div>
+            <h3 class="text-xl font-semibold text-black mb-3">Dokumen Prodi</h3>
+            <p class="text-gray-400 mb-4">LKPS, LED, sertifikat akreditasi, dan kurikulum program studi</p>
+            <div class="flex items-center text-purple-400 font-medium group-hover:gap-3 transition-all">
+              Akses Dokumen
+              <svg class="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" fill="none"
+                stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3">
+                </path>
+              </svg>
+            </div>
+          </div>
+        </a>
+
+        <!-- Feature 4 -->
+        <a href="{{ route('asesor.informasi-tambahan') }}" class="group">
+          <div
+            class="bg-gray-800/50 backdrop-blur-sm rounded-md p-8 border border-gray-700 hover:border-yellow-500 transform hover:-translate-y-2 transition-all duration-300">
+            <div
+              class="w-16 h-16 bg-yellow-600/20 rounded-xl flex items-center justify-center mb-6 group-hover:bg-yellow-600/30 transition-colors">
+              <svg class="w-8 h-8 text-yellow-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+              </svg>
+            </div>
+            <h3 class="text-xl font-semibold text-black mb-3">Informasi Tambahan</h3>
+            <p class="text-gray-400 mb-4">Data SDM, sarana prasarana, dan informasi pendukung lainnya</p>
+            <div class="flex items-center text-yellow-400 font-medium group-hover:gap-3 transition-all">
+              Akses Informasi
+              <svg class="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" fill="none"
+                stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3">
+                </path>
+              </svg>
+            </div>
+          </div>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Statistics Section -->
+  <section id="statistik" class="py-24 bg-gradient-to-b from-gray-800 to-gray-900 relative overflow-hidden">
+    <!-- Pattern Background -->
+    {{-- <div class="absolute inset-0 bg-black/10">
+      <div class="absolute inset-0 bg-cover bg-center" style="background-image: url('/storage/background2.jpg');"></div>
+    </div> --}}
+
+
+    <div class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="text-center mt-4 mb-8">
+        <h2 class="text-xl font-bold text-black mb-4">Statistik Akreditasi</h2>
+        <div class="w-24 h-1 bg-blue-500 mx-auto mb-6"></div>
+        <p class="text-xl text-gray-700 max-w-2xl mx-auto">
+          Data real-time tentang status akreditasi dan dokumen dalam sistem
+        </p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-16">
+        <!-- Stat 1 -->
+        <div
+          class="bg-gray-800/50 backdrop-blur-sm rounded-md p-8 border border-gray-700 text-center transform hover:scale-105 transition-all duration-300">
+          <div class="w-20 h-20 bg-blue-600/20 rounded-full flex items-center justify-center mx-auto mb-4">
+            <svg class="w-10 h-10 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z">
+              </path>
+            </svg>
+          </div>
+          <p class="text-4xl font-bold text-black mb-2">{{ $totalDokumen ?? 0 }}</p>
+          <p class="text-gray-400">Dokumen Tersedia</p>
         </div>
 
-        {{-- Quick Access --}}
-        <div class="space-y-6">
-          {{-- Calendar Widget --}}
-          <div class="bg-white rounded-2xl shadow-xl overflow-hidden">
-            <div class="bg-gradient-to-r from-purple-600 to-pink-600 px-6 py-4">
-              <h2 class="text-xl font-semibold text-white">Kalender</h2>
-            </div>
-            <div class="p-6">
-              <div class="text-center">
-                <div class="text-4xl font-bold text-gray-900">{{ now()->format('d') }}</div>
-                <div class="text-lg text-gray-600">{{ now()->format('F Y') }}</div>
-                <div class="mt-4 space-y-2">
-                  <div class="text-sm text-gray-500">Jadwal AMI Terdekat</div>
-                  <div class="text-sm font-medium text-purple-600">15 Juni 2025</div>
+        <!-- Stat 2 -->
+        <div
+          class="bg-gray-800/50 backdrop-blur-sm rounded-md p-8 border border-gray-700 text-center transform hover:scale-105 transition-all duration-300">
+          <div class="w-20 h-20 bg-green-600/20 rounded-full flex items-center justify-center mx-auto mb-4">
+            <svg class="w-10 h-10 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M8 14v3m4-3v3m4-3v3M3 21h18M3 10h18M3 7l9-4 9 4M4 10h16v11H4V10z"></path>
+            </svg>
+          </div>
+          <p class="text-4xl font-bold text-black mb-2">{{ $totalFakultas ?? 0 }}</p>
+          <p class="text-gray-400">Fakultas Terdaftar</p>
+        </div>
+
+        <!-- Stat 3 -->
+        <div
+          class="bg-gray-800/50 backdrop-blur-sm rounded-md p-8 border border-gray-700 text-center transform hover:scale-105 transition-all duration-300">
+          <div class="w-20 h-20 bg-purple-600/20 rounded-full flex items-center justify-center mx-auto mb-4">
+            <svg class="w-10 h-10 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253">
+              </path>
+            </svg>
+          </div>
+          <p class="text-4xl font-bold text-black mb-2">{{ $totalProdi ?? 0 }}</p>
+          <p class="text-gray-400">Program Studi Aktif</p>
+        </div>
+
+        <!-- Stat 4 -->
+        <div
+          class="bg-gray-800/50 backdrop-blur-sm rounded-md p-8 border border-gray-700 text-center transform hover:scale-105 transition-all duration-300">
+          <div class="w-20 h-20 bg-yellow-600/20 rounded-full flex items-center justify-center mx-auto mb-4">
+            <svg class="w-10 h-10 text-yellow-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z">
+              </path>
+            </svg>
+          </div>
+          <p class="text-4xl font-bold text-black mb-2">{{ $prodiTerakreditasi ?? 0 }}</p>
+          <p class="text-gray-400">Prodi Terakreditasi</p>
+        </div>
+      </div>
+
+      <!-- Akreditasi Status Chart -->
+      <div class="bg-gray-800/50 backdrop-blur-sm rounded-md mb-3 mt-3 p-8 border border-gray-700">
+        <h3 class="text-xl font-semibold text-black mb-8 text-center">Status Akreditasi Program Studi</h3>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <div class="text-center">
+            <div class="relative inline-flex">
+              <svg class="w-32 h-32 transform -rotate-90">
+                <circle cx="64" cy="64" r="60" stroke="currentColor" stroke-width="8" fill="none"
+                  class="text-black-700"></circle>
+                <circle cx="64" cy="64" r="60" stroke="currentColor" stroke-width="8" fill="none"
+                  stroke-dasharray="377"
+                  stroke-dashoffset="{{ 377 - (377 * ($akreditasiUnggul ?? 0)) / max($prodiTerakreditasi, 1) }}"
+                  class="text-green-400 transition-all duration-1000"></circle>
+              </svg>
+              <div class="absolute inset-0 flex items-center justify-center">
+                <div>
+                  <p class="text-3xl font-bold text-black">{{ $akreditasiUnggul ?? 0 }}</p>
+                  <p class="text-sm text-green-400">Unggul</p>
                 </div>
               </div>
             </div>
           </div>
-
-          {{-- Quick Links --}}
-          <div class="bg-white rounded-2xl shadow-xl overflow-hidden">
-            <div class="bg-gradient-to-r from-green-600 to-teal-600 px-6 py-4">
-              <h2 class="text-xl font-semibold text-white">Akses Cepat</h2>
-            </div>
-            <div class="p-6 space-y-3">
-              <a href="{{ route('asesor.dokumen-institusi') }}"
-                class="flex items-center justify-between p-3 rounded-lg hover:bg-gray-50 transition-colors">
-                <span class="text-sm font-medium text-gray-700">Dokumen Institusi</span>
-                <svg class="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-                </svg>
-              </a>
-              <a href="{{ route('asesor.dokumen-fakultas') }}"
-                class="flex items-center justify-between p-3 rounded-lg hover:bg-gray-50 transition-colors">
-                <span class="text-sm font-medium text-gray-700">Dokumen Fakultas</span>
-                <svg class="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-                </svg>
-              </a>
-              <a href="{{ route('asesor.dokumen-prodi') }}"
-                class="flex items-center justify-between p-3 rounded-lg hover:bg-gray-50 transition-colors">
-                <span class="text-sm font-medium text-gray-700">Dokumen Program Studi</span>
-                <svg class="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-                </svg>
-              </a>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    {{-- Chart/Statistics Section --}}
-    <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 pb-12">
-      <div class="bg-white rounded-2xl shadow-xl overflow-hidden">
-        <div class="bg-gradient-to-r from-indigo-600 to-purple-600 px-6 py-4">
-          <h2 class="text-xl font-semibold text-white">Statistik Dokumen per Kategori</h2>
-        </div>
-        <div class="p-6">
-          <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
-            @php
-              $categories = [
-                  ['name' => 'Kebijakan Mutu', 'count' => 12, 'color' => 'blue'],
-                  ['name' => 'Standar Mutu', 'count' => 8, 'color' => 'indigo'],
-                  ['name' => 'Laporan AMI', 'count' => 15, 'color' => 'purple'],
-                  ['name' => 'Evaluasi Diri', 'count' => 6, 'color' => 'pink'],
-              ];
-            @endphp
-            @foreach ($categories as $cat)
-              <div class="text-center">
-                <div class="relative inline-flex items-center justify-center w-20 h-20 mb-3">
-                  <svg class="transform -rotate-90 w-20 h-20">
-                    <circle cx="40" cy="40" r="36" stroke="currentColor" stroke-width="8"
-                      fill="none" class="text-gray-200"></circle>
-                    <circle cx="40" cy="40" r="36" stroke="currentColor" stroke-width="8"
-                      fill="none" class="text-{{ $cat['color'] }}-600"
-                      stroke-dasharray="{{ 226.2 * ($cat['count'] / 20) }} 226.2" stroke-linecap="round"></circle>
-                  </svg>
-                  <span class="absolute text-xl font-semibold text-gray-700">{{ $cat['count'] }}</span>
+          <div class="text-center">
+            <div class="relative inline-flex">
+              <svg class="w-32 h-32 transform -rotate-90">
+                <circle cx="64" cy="64" r="60" stroke="currentColor" stroke-width="8" fill="none"
+                  class="text-gray-700"></circle>
+                <circle cx="64" cy="64" r="60" stroke="currentColor" stroke-width="8" fill="none"
+                  stroke-dasharray="377"
+                  stroke-dashoffset="{{ 377 - (377 * ($akreditasiBaikSekali ?? 0)) / max($prodiTerakreditasi, 1) }}"
+                  class="text-blue-400 transition-all duration-1000"></circle>
+              </svg>
+              <div class="absolute inset-0 flex items-center justify-center">
+                <div>
+                  <p class="text-3xl font-bold text-black">{{ $akreditasiBaikSekali ?? 0 }}</p>
+                  <p class="text-sm text-blue-400">Baik Sekali</p>
                 </div>
-                <h3 class="text-sm font-medium text-gray-900">{{ $cat['name'] }}</h3>
               </div>
-            @endforeach
+            </div>
+          </div>
+          <div class="text-center">
+            <div class="relative inline-flex">
+              <svg class="w-32 h-32 transform -rotate-90">
+                <circle cx="64" cy="64" r="60" stroke="currentColor" stroke-width="8" fill="none"
+                  class="text-gray-700"></circle>
+                <circle cx="64" cy="64" r="60" stroke="currentColor" stroke-width="8" fill="none"
+                  stroke-dasharray="377"
+                  stroke-dashoffset="{{ 377 - (377 * ($akreditasiAktif ?? 0)) / max($prodiTerakreditasi, 1) }}"
+                  class="text-yellow-400 transition-all duration-1000"></circle>
+              </svg>
+              <div class="absolute inset-0 flex items-center justify-center">
+                <div>
+                  <p class="text-3xl font-bold text-black">{{ $akreditasiAktif ?? 0 }}</p>
+                  <p class="text-sm text-yellow-400">Aktif</p>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
     </div>
-  </div>
+  </section>
+
+  <!-- Visi Misi Section -->
+  <section id="visi-misi" class="py-24 bg-gradient-to-b from-gray-900 to-gray-800">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="text-center mt-3 mb-6">
+        <h2 class="text-2xl font-bold text-gray-900 mb-4">Visi & Misi</h2>
+        <div class="w-24 h-1 bg-blue-500 mx-auto mb-6"></div>
+        <p class="text-xl text-gray-600 max-w-2xl mx-auto">
+          Komitmen kami untuk meningkatkan mutu pendidikan tinggi
+        </p>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center rounded-md overflow-hidden">
+        <div class="space-y-8">
+          <div
+            class="bg-gradient-to-r from-blue-500 to-purple-600 rounded-2xl shadow-xl p-8 transform hover:scale-105 transition-all duration-300">
+            <div class="flex items-center mb-6">
+              <div class="w-14 h-14 bg-blue-100 rounded-xl flex items-center justify-center mr-4">
+                <svg class="w-7 h-7 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z">
+                  </path>
+                </svg>
+              </div>
+              <h3 class="text-2xl font-bold text-gray-900">Visi</h3>
+            </div>
+            <p class="text-gray-600 leading-relaxed text-lg">
+              Menjadi sistem informasi akreditasi terdepan yang mendukung peningkatan mutu pendidikan tinggi melalui
+              pengelolaan dokumen yang efisien, transparan, dan berkelanjutan.
+            </p>
+          </div>
+
+          <div class="bg-white rounded-2xl shadow-xl p-8 transform hover:scale-105 transition-all duration-300">
+            <div class="flex items-center mb-6">
+              <div class="w-14 h-14 bg-purple-100 rounded-xl flex items-center justify-center mr-4">
+                <svg class="w-7 h-7 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z">
+                  </path>
+                </svg>
+              </div>
+              <h3 class="text-2xl font-bold text-gray-900">Misi</h3>
+            </div>
+            <ul class="space-y-4 text-gray-600">
+              <li class="flex items-start">
+                <svg class="w-6 h-6 text-purple-500 mr-3 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                  <path fill-rule="evenodd"
+                    d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                    clip-rule="evenodd"></path>
+                </svg>
+                <span class="text-lg">Menyediakan akses mudah dan cepat ke dokumen akreditasi</span>
+              </li>
+              <li class="flex items-start">
+                <svg class="w-6 h-6 text-purple-500 mr-3 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                  <path fill-rule="evenodd"
+                    d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                    clip-rule="evenodd"></path>
+                </svg>
+                <span class="text-lg">Memfasilitasi proses evaluasi dan penilaian akreditasi</span>
+              </li>
+              <li class="flex items-start">
+                <svg class="w-6 h-6 text-purple-500 mr-3 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                  <path fill-rule="evenodd"
+                    d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                    clip-rule="evenodd"></path>
+                </svg>
+                <span class="text-lg">Mendukung transparansi dan akuntabilitas institusi</span>
+              </li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="relative w-full h-full">
+          <div
+            class="absolute inset-0 bg-gradient-to-r from-blue-500 to-purple-600 rounded-3xl transform rotate-3 scale-105">
+          </div>
+          <img src="{{ asset('storage/ilustrasi1.jpg') }}" alt="Visi Misi Illustration"
+            class="relative rounded-3xl shadow-2xl transform -rotate-3 hover:rotate-0 transition-transform duration-500">
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Include Fakultas Section -->
+  @include('asesor.partials.fakultas-section')
+
+  <!-- Include Program Studi Section -->
+  @include('asesor.partials.program-studi-section')
+
+  <!-- Include Akreditasi Timeline Section -->
+  @include('asesor.partials.berita-pengumuman-section')
+
+  <!-- CTA Section -->
+  <section class="py-20 bg-gradient-to-r from-blue-600 to-purple-600">
+    <div class="max-w-4xl mx-auto text-center px-4 sm:px-6 lg:px-8">
+      <p class="text-xl mb-8 text-blue-400">
+        Akses dokumen akreditasi dan informasi penting lainnya dengan mudah
+      </p>
+      <div class="flex flex-col sm:flex-row gap-4 justify-center">
+        <a href="{{ route('asesor.dokumen-institusi') }}"
+          class="inline-flex items-center justify-center px-4 py-3 bg-gray-400 text-blue-600 font-bold rounded-lg hover:bg-gray-700 transform hover:scale-105 transition-all duration-300">
+          Mulai Eksplorasi
+          <svg class="ml-2 w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"></path>
+          </svg>
+        </a>
+        <a href="#features"
+          class="inline-flex items-center justify-center px-4 py-3 border-2 border-white text-black font-bold rounded-lg hover:bg-white hover:text-blue-600 transition-all duration-300">
+          Pelajari Lebih Lanjut
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Custom Styles -->
+  <style>
+    @keyframes blob {
+      0% {
+        transform: translate(0px, 0px) scale(1);
+      }
+
+      33% {
+        transform: translate(30px, -50px) scale(1.1);
+      }
+
+      66% {
+        transform: translate(-20px, 20px) scale(0.9);
+      }
+
+      100% {
+        transform: translate(0px, 0px) scale(1);
+      }
+    }
+
+    .animate-blob {
+      animation: blob 7s infinite;
+    }
+
+    .animation-delay-2000 {
+      animation-delay: 2s;
+    }
+
+    .animation-delay-4000 {
+      animation-delay: 4s;
+    }
+
+    .bg-grid-pattern {
+      background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%239C92AC' fill-opacity='0.1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+    }
+
+    @keyframes fade-in-up {
+      from {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .animate-fade-in-up {
+      animation: fade-in-up 1s ease-out;
+    }
+  </style>
 @endsection
-
-@push('scripts')
-  <script>
-    // Add any interactive features here
-  </script>
-@endpush

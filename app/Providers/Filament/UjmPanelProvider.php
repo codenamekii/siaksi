@@ -1,6 +1,6 @@
 <?php
+// Lokasi file: app/Providers/Filament/UjmPanelProvider.php
 
-// 1. app/Providers/Filament/UjmPanelProvider.php
 namespace App\Providers\Filament;
 
 use Filament\Http\Middleware\Authenticate;
@@ -20,6 +20,7 @@ use Illuminate\Session\Middleware\StartSession;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
 use Filament\Navigation\NavigationGroup;
 use Illuminate\Support\Facades\Auth;
+use App\Http\Middleware\RedirectIfNotUJMOrAuthorized;
 
 class UjmPanelProvider extends PanelProvider
 {
@@ -49,8 +50,8 @@ class UjmPanelProvider extends PanelProvider
         \App\Filament\Ujm\Widgets\DocumentStatus::class,
       ])
       ->plugin(
-          \Hasnayeen\Themes\ThemesPlugin::make()
-              ->canViewThemesPage(fn() => Auth::user()?->is_ujm_admin === true)
+        \Hasnayeen\Themes\ThemesPlugin::make()
+          ->canViewThemesPage(fn() => Auth::user()?->is_ujm_admin === true)
       )
       ->navigationGroups([
         NavigationGroup::make()
@@ -96,6 +97,7 @@ class UjmPanelProvider extends PanelProvider
       ])
       ->authMiddleware([
         Authenticate::class,
+        RedirectIfNotUJMOrAuthorized::class, // Tambahkan middleware fleksibel
       ])
       ->authGuard('web')
       ->tenant(null)

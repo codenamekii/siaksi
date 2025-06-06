@@ -1,10 +1,14 @@
 <?php
+// Lokasi file: routes/web.php
 
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\LogoutController;
 use App\Http\Controllers\AsesorController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
+
+// Include role switching routes - MOVED OUTSIDE OF CLOSURE
+require __DIR__ . '/role-switch.php';
 
 // Redirect root based on auth status
 Route::get('/', function () {
@@ -20,52 +24,7 @@ Route::get('/', function () {
         return redirect()->route('asesor.dashboard');
       default:
         return redirect()->route('login');
-        // Quick test route to bypass middleware
-        Route::get('/quick-asesor-test', function () {
-          // Login as first asesor user
-          $asesor = \App\Models\User::where('role', 'asesor')->where('is_active', true)->first();
-
-          if (!$asesor) {
-            return 'No active asesor user found in database!';
-          }
-
-          Auth::login($asesor);
-
-          return "
-            <h2>Quick Asesor Test</h2>
-            <p>Logged in as: {$asesor->name}</p>
-            <p>Email: {$asesor->email}</p>
-            <p>Role: {$asesor->role}</p>
-            <hr>
-            <p><a href='/asesor/dashboard'>Go to Asesor Dashboard</a></p>
-            <p><a href='/check-role'>Check Role</a></p>
-            <hr>
-            <p>If you get 403 error when clicking dashboard link, the problem is in the middleware.</p>
-        ";
-        });
-
-        // Direct asesor dashboard test
-        Route::get('/test-asesor-direct', function () {
-          $asesor = \App\Models\User::where('role', 'asesor')->where('is_active', true)->first();
-
-          if (!$asesor) {
-            return 'No active asesor user found!';
-          }
-
-          Auth::login($asesor);
-
-          // Try to load dashboard directly
-          try {
-            $controller = new \App\Http\Controllers\AsesorController();
-            return $controller->dashboard(request());
-          } catch (\Exception $e) {
-            return "Error: " . $e->getMessage();
-          }
-        });
     }
-
-    // Include role switching routes
-    require __DIR__ . '/role-switch.php';
   }
 
   return redirect()->route('login');
@@ -116,10 +75,9 @@ Route::middleware('auth')->group(function () {
     // Informasi
     Route::get('/informasi-tambahan', [AsesorController::class, 'informasiTambahan'])->name('asesor.informasi-tambahan');
 
-    // Future routes (to be implemented)
-    // Route::get('/statistik', [AsesorController::class, 'statistik'])->name('asesor.statistik');
-    // Route::get('/profile', [AsesorController::class, 'profile'])->name('asesor.profile');
-    // Route::get('/search', [AsesorController::class, 'search'])->name('asesor.search');
+    // Berita routes
+    Route::get('/berita', [AsesorController::class, 'beritaIndex'])->name('asesor.berita.index');
+    Route::get('/berita/{slug}', [AsesorController::class, 'beritaDetail'])->name('asesor.berita.detail');
   });
 });
 
@@ -197,5 +155,24 @@ if (app()->environment('local')) {
             <hr>
             <p>If you get 403 error when clicking dashboard link, the problem is in the middleware.</p>
         ";
+  });
+
+  // Direct asesor dashboard test
+  Route::get('/test-asesor-direct', function () {
+    $asesor = \App\Models\User::where('role', 'asesor')->where('is_active', true)->first();
+
+    if (!$asesor) {
+      return 'No active asesor user found!';
+    }
+
+    Auth::login($asesor);
+
+    // Try to load dashboard directly
+    try {
+      $controller = new \App\Http\Controllers\AsesorController();
+      return $controller->dashboard(request());
+    } catch (\Exception $e) {
+      return "Error: " . $e->getMessage();
+    }
   });
 }

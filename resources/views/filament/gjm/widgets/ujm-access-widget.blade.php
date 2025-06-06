@@ -1,3 +1,5 @@
+{{-- Lokasi file: resources/views/filament/gjm/widgets/ujm-access-widget.blade.php --}}
+
 <x-filament-widgets::widget>
   <x-filament::section>
     <div class="space-y-4">
@@ -7,14 +9,14 @@
       </div>
 
       {{-- Asesor Dashboard Button --}}
-      <div class="p-4 bg-gradient-to-r from-purple-500 to-pink-500 rounded-lg">
-        <div class="flex items-center justify-between text-white">
+      <div class="p-4 bg-gray-100 dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700">
+        <div class="flex items-center justify-between">
           <div>
-            <h3 class="text-xl font-semibold">Dashboard Asesor</h3>
-            <p class="text-sm opacity-90">Akses ke dashboard asesor untuk melihat dokumen</p>
+            <h3 class="text-xl font-semibold text-gray-900 dark:text-white">Dashboard Asesor</h3>
+            <p class="text-sm text-gray-600 dark:text-gray-400">Akses ke dashboard asesor untuk melihat dokumen</p>
           </div>
           <a href="{{ url('/gjm/login-as-asesor') }}"
-            class="inline-flex items-center px-4 py-2 bg-white text-purple-600 font-semibold rounded-lg hover:bg-gray-100 transition">
+            class="inline-flex items-center px-4 py-2 bg-purple-600 text-white font-semibold rounded-lg hover:bg-purple-700 transition">
             <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                 d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path>
@@ -29,19 +31,19 @@
         <h3 class="text-lg font-medium mb-3">Dashboard UJM Program Studi</h3>
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           @foreach ($this->getUjmUsers() as $ujm)
-            <div class="bg-white border border-gray-200 rounded-lg p-4 hover:shadow-lg transition">
+            <div class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-4 hover:shadow-lg transition">
               <div class="flex items-start justify-between">
                 <div class="flex-1">
-                  <h4 class="font-semibold text-gray-900">{{ $ujm->name }}</h4>
-                  <p class="text-sm text-gray-600 mt-1">
+                  <h4 class="font-semibold text-gray-900 dark:text-white">{{ $ujm->name }}</h4>
+                  <p class="text-sm text-gray-600 dark:text-gray-400 mt-1">
                     {{ $ujm->programStudi?->nama ?? 'No Program Studi' }}
                   </p>
                   @if ($ujm->programStudi?->fakultas)
-                    <p class="text-xs text-gray-500 mt-1">
+                    <p class="text-xs text-gray-500 dark:text-gray-500 mt-1">
                       {{ $ujm->programStudi->fakultas->nama }}
                     </p>
                   @endif
-                  <p class="text-xs text-gray-400 mt-2">{{ $ujm->email }}</p>
+                  <p class="text-xs text-gray-400 dark:text-gray-600 mt-2">{{ $ujm->email }}</p>
                 </div>
               </div>
               <div class="mt-3">
