@@ -38,8 +38,15 @@ class AsesorController extends Controller
             return;
         }
 
-        // Allow if GJM or UJM is accessing as asesor (check session)
-        if (session('gjm_original_user') || session('ujm_original_user')) {
+        // Allow if user is GJM (super admin)
+        if ($user->role === 'gjm') {
+            // Set session flag to indicate GJM is viewing
+            session(['viewing_as_gjm' => true]);
+            return;
+        }
+
+        // Allow if UJM is accessing as asesor (check session)
+        if ($user->role === 'ujm' && session('ujm_original_user')) {
             return;
         }
 
@@ -52,34 +59,46 @@ class AsesorController extends Controller
         abort(403, 'Access denied. You must be logged in as an Asesor.');
     }
 
-    /**
-     * Dashboard utama asesor - Landing Page Style
-     */
+    public function debugSession()
+    {
+        return response()->json([
+            'current_user' => Auth::user(),
+            'gjm_original_user' => session('gjm_original_user'),
+            'ujm_original_user' => session('ujm_original_user'),
+            'all_session' => session()->all(),
+            'has_gjm_session' => session()->has('gjm_original_user'),
+            'has_ujm_session' => session()->has('ujm_original_user'),
+        ]);
+    }
+
     public function dashboard(Request $request)
     {
-        // Check access
+        // Check access first
         $this->checkAsesorAccess();
 
+        $user = Auth::user();
+
+        $debugSession = [
+            'gjm_original_user' => session('gjm_original_user'),
+            'ujm_original_user' => session('ujm_original_user'),
+            'viewing_as_gjm' => session('viewing_as_gjm'),
+            'has_return_button' => $user->role === 'gjm' || session('gjm_original_user') || session('ujm_original_user'),
+            'current_role' => $user->role,
+        ];
+
         try {
-            // Statistics for landing page
             $data = [
-                // Basic stats
                 'totalFakultas' => Fakultas::count(),
                 'totalProdi' => ProgramStudi::where('is_active', true)->count(),
                 'totalDokumen' => $this->getSafeDokumenCount(),
                 'dokumenVisible' => $this->getSafeDokumenCount(),
-
-                // Akreditasi stats
                 'prodiTerakreditasi' => ProgramStudi::whereHas('akreditasi')->count(),
                 'akreditasiAktif' => AkreditasiProdi::where('tanggal_berakhir', '>', now())->count(),
                 'akreditasiUnggul' => AkreditasiProdi::where('status_akreditasi', 'Unggul')->where('tanggal_berakhir', '>', now())->count(),
                 'akreditasiBaikSekali' => AkreditasiProdi::where('status_akreditasi', 'Baik Sekali')->where('tanggal_berakhir', '>', now())->count(),
-
-                // Recent documents (for potential use in sections)
                 'recentDocuments' => $this->getRecentDocuments($request->get('search')),
             ];
         } catch (\Exception $e) {
-            // Fallback data if there are errors
             $data = [
                 'totalFakultas' => 0,
                 'totalProdi' => 0,
@@ -95,6 +114,9 @@ class AsesorController extends Controller
             Log::error('Asesor Dashboard Error: ' . $e->getMessage());
         }
 
+        $data['user'] = $user;
+        $data['debugSession'] = $debugSession;
+
         return view('asesor.dashboard', $data);
     }
 
@@ -104,17 +126,12 @@ class AsesorController extends Controller
     private function getSafeDokumenCount()
     {
         try {
-            if (method_exists(Dokumen::class, 'scopeVisibleToAsesor')) {
-                return Dokumen::visibleToAsesor()->count();
+            if (method_exists(Dokumen::class, 'scopeAccessibleByAsesor')) {
+                return Dokumen::accessibleByAsesor()->count();
             }
 
-            // Fallback: check if column exists
-            if (Schema::hasColumn('dokumen', 'is_visible_to_asesor')) {
-                return Dokumen::where('is_visible_to_asesor', true)->count();
-            }
-
-            // Default: return all dokumen
-            return Dokumen::count();
+            // Fallback: just count active documents
+            return Dokumen::where('is_active', true)->count();
         } catch (\Exception $e) {
             return 0;
         }
@@ -128,11 +145,11 @@ class AsesorController extends Controller
         try {
             $query = Dokumen::query();
 
-            // Apply visibility filter if method exists
-            if (method_exists(Dokumen::class, 'scopeVisibleToAsesor')) {
-                $query->visibleToAsesor();
-            } elseif (Schema::hasColumn('dokumen', 'is_visible_to_asesor')) {
-                $query->where('is_visible_to_asesor', true);
+            // Apply accessibility filter
+            if (method_exists(Dokumen::class, 'scopeAccessibleByAsesor')) {
+                $query->accessibleByAsesor();
+            } else {
+                $query->where('is_active', true);
             }
 
             // Apply search if provided
@@ -161,16 +178,31 @@ class AsesorController extends Controller
         $this->checkAsesorAccess();
 
         try {
+            // Debug query
+            Log::info('Dokumen Institusi Query Debug', [
+                'total_universitas_docs' => Dokumen::where('level', 'universitas')->count(),
+                'active_universitas_docs' => Dokumen::where('level', 'universitas')->where('is_active', true)->count(),
+                'visible_universitas_docs' => Dokumen::where('level', 'universitas')->where('is_visible_to_asesor', true)->count(),
+            ]);
+
             $query = Dokumen::where('level', 'universitas');
 
-            // Apply visibility filter if method exists
-            if (method_exists(Dokumen::class, 'scopeVisibleToAsesor')) {
-                $query->visibleToAsesor();
-            } elseif (Schema::hasColumn('dokumen', 'is_visible_to_asesor')) {
-                $query->where('is_visible_to_asesor', true);
+            // If user is GJM, show all active documents
+            $user = Auth::user();
+            if ($user && $user->role === 'gjm') {
+                $query->where('is_active', true);
+            } else {
+                // For regular asesor, check visibility
+                $query->where('is_active', true)->where('is_visible_to_asesor', true);
             }
 
             $dokumen = $query->orderBy('kategori')->orderBy('created_at', 'desc')->get()->groupBy('kategori');
+
+            // Debug result
+            Log::info('Dokumen Institusi Result', [
+                'categories' => $dokumen->keys()->toArray(),
+                'total_docs' => $dokumen->flatten()->count(),
+            ]);
         } catch (\Exception $e) {
             $dokumen = collect([]);
             Log::error('Dokumen Institusi Error: ' . $e->getMessage());
@@ -190,10 +222,12 @@ class AsesorController extends Controller
         try {
             $fakultas = Fakultas::with([
                 'dokumen' => function ($query) {
-                    if (method_exists(Dokumen::class, 'scopeVisibleToAsesor')) {
-                        $query->visibleToAsesor();
-                    } elseif (Schema::hasColumn('dokumen', 'is_visible_to_asesor')) {
-                        $query->where('is_visible_to_asesor', true);
+                    // Use the new accessible scope
+                    if (method_exists(Dokumen::class, 'scopeAccessibleByAsesor')) {
+                        $query->accessibleByAsesor();
+                    } else {
+                        // Fallback to active documents only
+                        $query->where('is_active', true);
                     }
                     $query->orderBy('kategori')->orderBy('created_at', 'desc');
                 },
@@ -203,10 +237,10 @@ class AsesorController extends Controller
             ])
                 ->withCount([
                     'dokumen' => function ($query) {
-                        if (method_exists(Dokumen::class, 'scopeVisibleToAsesor')) {
-                            $query->visibleToAsesor();
-                        } elseif (Schema::hasColumn('dokumen', 'is_visible_to_asesor')) {
-                            $query->where('is_visible_to_asesor', true);
+                        if (method_exists(Dokumen::class, 'scopeAccessibleByAsesor')) {
+                            $query->accessibleByAsesor();
+                        } else {
+                            $query->where('is_active', true);
                         }
                     },
                 ])
@@ -231,10 +265,10 @@ class AsesorController extends Controller
         try {
             $programStudi = ProgramStudi::with([
                 'dokumen' => function ($query) {
-                    if (method_exists(Dokumen::class, 'scopeVisibleToAsesor')) {
-                        $query->visibleToAsesor();
-                    } elseif (Schema::hasColumn('dokumen', 'is_visible_to_asesor')) {
-                        $query->where('is_visible_to_asesor', true);
+                    if (method_exists(Dokumen::class, 'scopeAccessibleByAsesor')) {
+                        $query->accessibleByAsesor();
+                    } else {
+                        $query->where('is_active', true);
                     }
                     $query->orderBy('kategori')->orderBy('created_at', 'desc');
                 },
@@ -243,10 +277,10 @@ class AsesorController extends Controller
             ])
                 ->withCount([
                     'dokumen' => function ($query) {
-                        if (method_exists(Dokumen::class, 'scopeVisibleToAsesor')) {
-                            $query->visibleToAsesor();
-                        } elseif (Schema::hasColumn('dokumen', 'is_visible_to_asesor')) {
-                            $query->where('is_visible_to_asesor', true);
+                        if (method_exists(Dokumen::class, 'scopeAccessibleByAsesor')) {
+                            $query->accessibleByAsesor();
+                        } else {
+                            $query->where('is_active', true);
                         }
                     },
                 ])
@@ -297,7 +331,6 @@ class AsesorController extends Controller
         return view('asesor.informasi-tambahan', $data);
     }
 
-  
     //  * Halaman index berita dan pengumuman
     public function beritaIndex(Request $request)
     {
@@ -319,8 +352,7 @@ class AsesorController extends Controller
         // Search
         if ($search) {
             $query->where(function ($q) use ($search) {
-                $q->where('judul', 'like', "%{$search}%")
-                    ->orWhere('konten', 'like', "%{$search}%");
+                $q->where('judul', 'like', "%{$search}%")->orWhere('konten', 'like', "%{$search}%");
             });
         }
 

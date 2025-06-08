@@ -1,4 +1,5 @@
 <?php
+// Lokasi file: app/Filament/Gjm/Widgets/UjmAccessWidget.php
 
 namespace App\Filament\Gjm\Widgets;
 
@@ -26,16 +27,15 @@ class UjmAccessWidget extends Widget
 
   public function loginAsUjm($ujmId)
   {
+    // GJM doesn't need to switch identity, just redirect
     $ujm = User::find($ujmId);
 
     if ($ujm && $ujm->role === 'ujm') {
-      // Store current user ID to return later
-      session(['gjm_original_user' => Auth::id()]);
+      // Set session to indicate which UJM dashboard GJM is viewing
+      session(['viewing_ujm_id' => $ujmId]);
+      session(['viewing_as_gjm' => true]);
 
-      // Login as UJM
-      Auth::login($ujm);
-
-      // Redirect to UJM dashboard
+      // Redirect directly to UJM dashboard
       return redirect('/ujm');
     }
 
@@ -44,20 +44,11 @@ class UjmAccessWidget extends Widget
 
   public function goToAsesorDashboard()
   {
-    // Get first asesor user or create temporary session
-    $asesor = User::where('role', 'asesor')->where('is_active', true)->first();
+    // GJM doesn't need to switch identity
+    // Just set session flag and redirect
+    session(['viewing_as_gjm' => true]);
 
-    if ($asesor) {
-      // Store current user ID to return later
-      session(['gjm_original_user' => Auth::id()]);
-
-      // Login as asesor
-      Auth::login($asesor);
-
-      // Redirect to asesor dashboard
-      return redirect('/asesor/dashboard');
-    }
-
-    return redirect()->back()->with('error', 'No active asesor user found.');
+    // Redirect directly to asesor dashboard
+    return redirect('/asesor/dashboard');
   }
 }

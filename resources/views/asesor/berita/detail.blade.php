@@ -6,65 +6,67 @@
 
 @section('content')
   <!-- Article Header -->
-  <section class="relative bg-gradient-to-br from-gray-900 to-gray-800 text-white">
-    <div class="absolute inset-0 bg-black/50"></div>
-    @if($berita->getFirstMediaUrl('gambar'))
-      <div class="absolute inset-0">
-        <img src="{{ $berita->getFirstMediaUrl('gambar') }}" alt="{{ $berita->judul }}" 
-          class="w-full h-full object-cover opacity-30">
-      </div>
-    @endif
-    
-    <div class="relative z-10 max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-24">
-      <!-- Breadcrumb -->
-      <nav class="mb-6">
-        <ol class="flex items-center space-x-2 text-sm">
-          <li>
-            <a href="{{ route('asesor.dashboard') }}" class="text-gray-300 hover:text-white transition">
-              Beranda
-            </a>
-          </li>
-          <li class="text-gray-500">/</li>
-          <li>
-            <a href="{{ route('asesor.berita.index') }}" class="text-gray-300 hover:text-white transition">
-              Berita & Pengumuman
-            </a>
-          </li>
-          <li class="text-gray-500">/</li>
-          <li class="text-gray-400">{{ Str::limit($berita->judul, 30) }}</li>
-        </ol>
-      </nav>
-
-      <!-- Article Meta -->
-      <div class="flex items-center space-x-4 mb-6">
-        <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium {{ $berita->kategori === 'berita' ? 'bg-blue-100 text-blue-800' : 'bg-purple-100 text-purple-800' }}">
-          {{ ucfirst($berita->kategori) }}
-        </span>
-        <span class="text-sm text-gray-300">{{ $berita->formatted_published_date }}</span>
-        <span class="text-sm text-gray-300">{{ $berita->level === 'fakultas' ? 'Fakultas' : 'Program Studi' }}</span>
-      </div>
-
-      <!-- Title -->
-      <h1 class="text-4xl md:text-5xl font-bold mb-6 leading-tight">{{ $berita->judul }}</h1>
-
-      <!-- Author Info -->
-      <div class="flex items-center space-x-4">
-        <div class="h-12 w-12 rounded-full bg-gradient-to-r from-blue-500 to-purple-600 flex items-center justify-center">
-          <span class="text-white font-bold text-lg">{{ substr($berita->user->name, 0, 1) }}</span>
+  <div class="relative py-16">
+    <section class="relative bg-gradient-to-br from-gray-900 to-gray-800 text-white">
+      <div class="absolute inset-0 bg-black/50"></div>
+      @if($berita->getFirstMediaUrl('gambar'))
+        <div class="absolute inset-0">
+          <img src="{{ $berita->getFirstMediaUrl('gambar') }}" alt="{{ $berita->judul }}" 
+            class="w-full h-full object-cover opacity-30">
         </div>
-        <div>
-          <p class="font-medium">{{ $berita->user->name }}</p>
-          <p class="text-sm text-gray-300">
-            @if($berita->level === 'prodi' && $berita->programStudi)
-              {{ $berita->programStudi->nama }} - {{ $berita->programStudi->fakultas->nama }}
-            @elseif($berita->fakultas)
-              {{ $berita->fakultas->nama }}
-            @endif
-          </p>
+      @endif
+      
+      <div class="relative z-10 max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-24">
+        <!-- Breadcrumb -->
+        <nav class="mb-3 mt-3">
+          <ol class="flex items-center space-x-2 text-sm">
+            <li>
+              <a href="{{ route('asesor.dashboard') }}" class="text-gray-300 hover:text-white transition">
+                Beranda
+              </a>
+            </li>
+            <li class="text-gray-500">/</li>
+            <li>
+              <a href="{{ route('asesor.berita.index') }}" class="text-gray-300 hover:text-white transition">
+                Berita & Pengumuman
+              </a>
+            </li>
+            <li class="text-gray-500">/</li>
+            <li class="text-gray-400">{{ Str::limit($berita->judul, 30) }}</li>
+          </ol>
+        </nav>
+
+        <!-- Article Meta -->
+        <div class="flex items-center space-x-4 mb-6">
+          <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium {{ $berita->kategori === 'berita' ? 'bg-blue-100 text-black' : 'bg-purple-100 text-black' }}">
+            {{ ucfirst($berita->kategori) }}
+          </span>
+          <span class="text-sm text-gray-300">{{ $berita->formatted_published_date }}</span>
+          <span class="text-sm text-gray-300">{{ $berita->level === 'fakultas' ? 'Fakultas' : 'Program Studi' }}</span>
+        </div>
+
+        <!-- Title -->
+        <h1 class="text-4xl md:text-5xl font-bold mb-6 leading-tight">{{ $berita->judul }}</h1>
+
+        <!-- Author Info -->
+        <div class="flex items-center space-x-4">
+          {{-- <div class="h-12 w-12 rounded-full relative bg-gradient-to-r from-blue-500 to-purple-600 flex items-center justify-center">
+            <span class="text-white font-bold text-lg">{{ substr($berita->user->name, 0, 1) }}</span>
+          </div> --}}
+          <div>
+            <p class="font-medium">{{ $berita->user->name }}</p>
+            <p class="text-sm text-gray-300">
+              @if($berita->level === 'prodi' && $berita->programStudi)
+                {{ $berita->programStudi->nama }} - {{ $berita->programStudi->fakultas->nama }}
+              @elseif($berita->fakultas)
+                {{ $berita->fakultas->nama }}
+              @endif
+            </p>
+          </div>
         </div>
       </div>
-    </div>
-  </section>
+    </section>
+  </div>
 
   <!-- Article Content -->
   <section class="py-12 bg-white">
@@ -79,7 +81,7 @@
         <div class="flex space-x-4">
           <a href="https://www.facebook.com/sharer/sharer.php?u={{ urlencode(request()->url()) }}" 
             target="_blank"
-            class="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition">
+            class="inline-flex items-center px-4 py-2 bg-black text-white rounded-lg hover:bg-blue-700 transition">
             <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 24 24">
               <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
             </svg>

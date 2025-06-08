@@ -36,11 +36,13 @@ class Dokumen extends Model implements HasMedia
     'fakultas_id',
     'program_studi_id',
     'is_visible_to_asesor',
+    'can_access_asesor', // Add this if column exists
     'is_active'
   ];
 
   protected $casts = [
     'is_visible_to_asesor' => 'boolean',
+    'can_access_asesor' => 'boolean',
     'is_active' => 'boolean',
     'temuan' => 'array', // Cast JSON field to array
     'created_at' => 'datetime',
@@ -57,7 +59,9 @@ class Dokumen extends Model implements HasMedia
     static::creating(function ($model) {
       // Set default values if not set
       $model->is_active = $model->is_active ?? true;
-      $model->is_visible_to_asesor = $model->is_visible_to_asesor ?? false;
+
+      // Default visibility for asesor should be true unless explicitly set to false
+      $model->is_visible_to_asesor = $model->is_visible_to_asesor ?? true;
 
       // Auto-set level based on ownership
       if (!$model->level) {
@@ -115,9 +119,34 @@ class Dokumen extends Model implements HasMedia
     return $query->where('is_active', true);
   }
 
+  /**
+   * Updated scope to be more flexible
+   */
   public function scopeVisibleToAsesor($query)
   {
+    // Check if column exists
+    if (Schema::hasColumn('dokumen', 'can_access_asesor')) {
+      return $query->where('can_access_asesor', true);
+    }
+
+    // Fallback to is_visible_to_asesor
     return $query->where('is_visible_to_asesor', true);
+  }
+
+  /**
+   * Scope for getting all documents accessible by asesor
+   */
+  public function scopeAccessibleByAsesor($query)
+  {
+    // If user is GJM viewing as asesor, show all documents
+    $user = Auth::user();
+    if ($user && $user->role === 'gjm') {
+      return $query->where('is_active', true);
+    }
+
+    // Otherwise check visibility flag
+    return $query->where('is_active', true)
+      ->where('is_visible_to_asesor', true);
   }
 
   public function scopeLaporan($query)
@@ -226,6 +255,11 @@ class Dokumen extends Model implements HasMedia
     $user = $user ?? Auth::user();
 
     if (!$user) return false;
+
+    // GJM can edit all documents
+    if ($user->role === 'gjm') {
+      return true;
+    }
 
     // Owner can always edit
     if ($user->id === $this->user_id) {

@@ -68,42 +68,19 @@
           </div>
 
           <!-- Right Content - Stats -->
-          {{-- <div class="hidden lg:block">
-            <div class="grid grid-cols-2 gap-6">
-              <div
-                class="bg-white/10 backdrop-blur-md rounded-2xl p-6 border border-white/20 transform hover:scale-105 transition-all duration-300">
-                <div class="text-4xl font-bold text-white mb-2">{{ $totalDokumen ?? 0 }}</div>
-                <div class="text-gray-300">Total Dokumen</div>
-                <div class="mt-4 h-1 bg-white/20 rounded-full overflow-hidden">
-                  <div class="h-full bg-blue-500 rounded-full" style="width: 75%"></div>
-                </div>
-              </div>
-              <div
-                class="bg-white/10 backdrop-blur-md rounded-2xl p-6 border border-white/20 transform hover:scale-105 transition-all duration-300">
-                <div class="text-4xl font-bold text-white mb-2">{{ $totalFakultas ?? 0 }}</div>
-                <div class="text-gray-300">Fakultas</div>
-                <div class="mt-4 h-1 bg-white/20 rounded-full overflow-hidden">
-                  <div class="h-full bg-green-500 rounded-full" style="width: 100%"></div>
-                </div>
-              </div>
-              <div
-                class="bg-white/10 backdrop-blur-md rounded-2xl p-6 border border-white/20 transform hover:scale-105 transition-all duration-300">
-                <div class="text-4xl font-bold text-white mb-2">{{ $totalProdi ?? 0 }}</div>
-                <div class="text-gray-300">Program Studi</div>
-                <div class="mt-4 h-1 bg-white/20 rounded-full overflow-hidden">
-                  <div class="h-full bg-purple-500 rounded-full" style="width: 85%"></div>
-                </div>
-              </div>
-              <div
-                class="bg-white/10 backdrop-blur-md rounded-2xl p-6 border border-white/20 transform hover:scale-105 transition-all duration-300">
-                <div class="text-4xl font-bold text-white mb-2">{{ $prodiTerakreditasi ?? 0 }}</div>
-                <div class="text-gray-300">Terakreditasi</div>
-                <div class="mt-4 h-1 bg-white/20 rounded-full overflow-hidden">
-                  <div class="h-full bg-yellow-500 rounded-full" style="width: 90%"></div>
-                </div>
-              </div>
+          {{-- @if (config('app.debug'))
+            <div class="bg-yellow-100 border border-yellow-400 text-white px-4 py-3 rounded relative mb-4"
+              role="alert">
+              <strong class="font-bold">Debug Session Info:</strong>
+              <ul class="mt-2">
+                <li>Current User: {{ Auth::user()->name }} ({{ Auth::user()->role }})</li>
+                <li>GJM Original User ID: {{ session('gjm_original_user') ?? 'None' }}</li>
+                <li>UJM Original User ID: {{ session('ujm_original_user') ?? 'None' }}</li>
+                <li>Should Show Return Button:
+                  {{ session('gjm_original_user') || session('ujm_original_user') ? 'Yes' : 'No' }}</li>
+              </ul>
             </div>
-          </div> --}}
+          @endif --}}
         </div>
 
         <!-- Scroll Indicator -->
@@ -245,7 +222,7 @@
         </p>
       </div>
 
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-16">
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-16 items-center">
         <!-- Stat 1 -->
         <div
           class="bg-gray-800/50 backdrop-blur-sm rounded-md p-8 border border-gray-700 text-center transform hover:scale-105 transition-all duration-300">
@@ -261,7 +238,7 @@
         </div>
 
         <!-- Stat 2 -->
-        <div
+        {{-- <div
           class="bg-gray-800/50 backdrop-blur-sm rounded-md p-8 border border-gray-700 text-center transform hover:scale-105 transition-all duration-300">
           <div class="w-20 h-20 bg-green-600/20 rounded-full flex items-center justify-center mx-auto mb-4">
             <svg class="w-10 h-10 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -271,7 +248,7 @@
           </div>
           <p class="text-4xl font-bold text-black mb-2">{{ $totalFakultas ?? 0 }}</p>
           <p class="text-gray-400">Fakultas Terdaftar</p>
-        </div>
+        </div> --}}
 
         <!-- Stat 3 -->
         <div
@@ -478,6 +455,7 @@
       </div>
     </div>
   </section>
+
 
   <!-- Custom Styles -->
   <style>

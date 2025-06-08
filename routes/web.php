@@ -4,6 +4,7 @@
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\LogoutController;
 use App\Http\Controllers\AsesorController;
+use App\Http\Middleware\RedirectIfNotAsesorOrGJM;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
 
@@ -81,6 +82,27 @@ Route::middleware('auth')->group(function () {
   });
 });
 
+// Asesor routes - WITH GJM SUPER ADMIN ACCESS
+Route::prefix('asesor')->middleware(['auth'])->group(function () {
+  // Dashboard
+  Route::get('/dashboard', [AsesorController::class, 'dashboard'])->name('asesor.dashboard');
+
+  // Dokumen routes
+  Route::get('/dokumen-institusi', [AsesorController::class, 'dokumenInstitusi'])->name('asesor.dokumen-institusi');
+  Route::get('/dokumen-fakultas', [AsesorController::class, 'dokumenFakultas'])->name('asesor.dokumen-fakultas');
+  Route::get('/dokumen-prodi', [AsesorController::class, 'dokumenProdi'])->name('asesor.dokumen-prodi');
+
+  // Informasi
+  Route::get('/informasi-tambahan', [AsesorController::class, 'informasiTambahan'])->name('asesor.informasi-tambahan');
+
+  // Berita routes
+  Route::get('/berita', [AsesorController::class, 'beritaIndex'])->name('asesor.berita.index');
+  Route::get('/berita/{slug}', [AsesorController::class, 'beritaDetail'])->name('asesor.berita.detail');
+
+  // Document download
+  Route::get('/dokumen/{id}/download', [AsesorController::class, 'downloadDokumen'])->name('asesor.dokumen.download');
+});
+
 // Debug routes (only for development)
 if (app()->environment('local')) {
   // Check user role
@@ -95,6 +117,30 @@ if (app()->environment('local')) {
         'can_access_asesor' => Auth::user()->role === 'asesor',
         'session_data' => session()->all()
       ]);
+
+      // Debug session
+      Route::get('/debug-session', function () {
+        return response()->json([
+          'current_user' => Auth::user(),
+          'gjm_original_user' => session('gjm_original_user'),
+          'ujm_original_user' => session('ujm_original_user'),
+          'all_session' => session()->all(),
+          'should_show_return_button' => session('gjm_original_user') || session('ujm_original_user')
+        ]);
+      })->middleware('auth');
+
+      // Test set session manually
+      Route::get('/test-set-session/{type}', function ($type) {
+        if ($type === 'gjm') {
+          session(['gjm_original_user' => 1]); // Assuming GJM user ID is 1
+          return 'GJM session set. <a href="/asesor/dashboard">Go to Asesor Dashboard</a>';
+        } elseif ($type === 'ujm') {
+          session(['ujm_original_user' => 2]); // Assuming UJM user ID is 2
+          return 'UJM session set. <a href="/asesor/dashboard">Go to Asesor Dashboard</a>';
+        }
+
+        return 'Invalid type';
+      });
     }
 
     return response()->json([

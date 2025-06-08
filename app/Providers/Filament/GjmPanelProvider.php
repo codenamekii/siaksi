@@ -36,6 +36,7 @@ class GjmPanelProvider extends PanelProvider
                 'success' => Color::Emerald,
                 'warning' => Color::Orange,
             ])
+            ->navigationGroups(['Profil', 'Dokumen', 'Mutu & Akreditasi', 'Manajemen', 'Laporan'])
             ->discoverResources(in: app_path('Filament/Gjm/Resources'), for: 'App\\Filament\\Gjm\\Resources')
             ->discoverPages(in: app_path('Filament/Gjm/Pages'), for: 'App\\Filament\\Gjm\\Pages')
             ->pages([Pages\Dashboard::class])

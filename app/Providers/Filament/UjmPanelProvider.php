@@ -21,6 +21,8 @@ use Illuminate\View\Middleware\ShareErrorsFromSession;
 use Filament\Navigation\NavigationGroup;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Middleware\RedirectIfNotUJMOrAuthorized;
+use App\Http\Middleware\RedirectIfNotUJMOrGJM;
+
 
 class UjmPanelProvider extends PanelProvider
 {
@@ -93,11 +95,10 @@ class UjmPanelProvider extends PanelProvider
         SubstituteBindings::class,
         DisableBladeIconComponents::class,
         DispatchServingFilamentEvent::class,
-        \Hasnayeen\Themes\Http\Middleware\SetTheme::class
       ])
       ->authMiddleware([
         Authenticate::class,
-        RedirectIfNotUJMOrAuthorized::class, // Tambahkan middleware fleksibel
+        RedirectIfNotUJMOrGJM::class, // Tambahkan middleware fleksibel
       ])
       ->authGuard('web')
       ->tenant(null)

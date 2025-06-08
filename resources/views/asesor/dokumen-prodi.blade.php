@@ -30,9 +30,6 @@
                 <option value="">Semua Jenjang</option>
                 <option value="S1">S1</option>
                 <option value="S2">S2</option>
-                <option value="S3">S3</option>
-                <option value="D3">D3</option>
-                <option value="D4">D4</option>
               </select>
             </div>
           </div>
@@ -84,6 +81,13 @@
                       'sertifikat_akreditasi',
                       'kurikulum',
                       'data_pendukung',
+                      'kebijakan_mutu',
+                      'standar_mutu_prodi',
+                      'prosedur/SOP',
+                      'instrumen',
+                      'laporan_hasil_AMI',
+                      'laporan_survey_kepuasan',
+                      'dokumentasi_kegiatan',
                   ];
                 @endphp
 
@@ -99,6 +103,14 @@
                                   'evaluasi_diri' => 'text-purple-600',
                                   'sertifikat_akreditasi' => 'text-green-600',
                                   'kurikulum' => 'text-orange-600',
+                                  'data_pendukung' => 'text-teal-600',
+                                  'kebijakan_mutu' => 'text-red-600',
+                                  'standar_mutu_prodi' => 'text-yellow-600',
+                                  'prosedur/SOP' => 'text-indigo-600',
+                                  'instrumen' => 'text-pink-600',
+                                  'laporan_hasil_AMI' => 'text-gray-700',
+                                  'laporan_survey_kepuasan' => 'text-gray-500',
+                                  'dokumentasi_kegiatan' => 'text-gray-400',
                                   default => 'text-gray-600',
                               };
                             @endphp

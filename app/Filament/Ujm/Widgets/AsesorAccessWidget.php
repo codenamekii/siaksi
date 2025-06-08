@@ -1,4 +1,5 @@
 <?php
+// Lokasi file: app/Filament/Ujm/Widgets/AsesorAccessWidget.php
 
 namespace App\Filament\Ujm\Widgets;
 
@@ -14,9 +15,15 @@ class AsesorAccessWidget extends Widget
 
   protected static ?int $sort = 4;
 
+  // Hide this widget if current user is GJM (they already have access)
+  public static function canView(): bool
+  {
+    return Auth::user()->role === 'ujm';
+  }
+
   public function goToAsesorDashboard()
   {
-    // Get first asesor user
+    // UJM still needs to switch identity
     $asesor = User::where('role', 'asesor')->where('is_active', true)->first();
 
     if ($asesor) {

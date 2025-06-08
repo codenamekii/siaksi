@@ -6,7 +6,7 @@
 
     <div class="space-y-3">
       @forelse($this->getRecentActivities() as $activity)
-        <div class="flex items-start space-x-3 p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition">
+        <div class="flex items-start space-x-3 p-3 bg-gray-700 rounded-lg hover:bg-gray-100 transition">
           <div class="flex-shrink-0">
             <div
               class="w-10 h-10 {{ $activity['color'] === 'blue' ? 'bg-blue-100' : ($activity['color'] === 'green' ? 'bg-green-100' : 'bg-purple-100') }} rounded-lg flex items-center justify-center">
