@@ -1,5 +1,4 @@
 <?php
-// Lokasi file: routes/web.php
 
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\LogoutController;
